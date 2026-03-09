@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include "Player.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), " ");
+    window.setFramerateLimit(60);
+
+    Player player;
+    player.spawn({ 900.f, 700.f });
 
     while (window.isOpen())
     {
@@ -13,9 +16,10 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
-
-        window.clear();
-        window.draw(shape);
+        player.update();
+        window.clear(sf::Color(0, 0, 0));
+        player.draw(window);
         window.display();
     }
+    return 0;
 }
