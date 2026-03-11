@@ -11,3 +11,4 @@ public:
 	virtual void draw(sf::RenderWindow& Window) = 0;
 
 };
+	

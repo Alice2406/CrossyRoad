@@ -148,6 +148,10 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Player.h" />
+    <ClCompile Include="MenuScene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MenuScene.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
