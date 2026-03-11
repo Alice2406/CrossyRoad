@@ -5,12 +5,14 @@
     <ClCompile Include="Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="Obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Player.h">
       <Filter>Player</Filter>
     </ClInclude>
+    <ClInclude Include="Obstacle.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FiniteStateMachine.rc" />
