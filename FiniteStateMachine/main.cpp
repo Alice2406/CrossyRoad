@@ -1,29 +1,34 @@
 #include <SFML/Graphics.hpp>
-#include "GameScene.h"
-#include <iostream>
+#include "MenuScene.h"
+#include <memory>
+#include <optional>
 
-
-int main()
-{
-    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Isometric");
+int main() {
+  
+    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road");
     window.setFramerateLimit(60);
 
-    sf::Clock dtClock;
-    GameScene gameScene; 
+    std::unique_ptr<Scene> currentScene = std::make_unique<MenuScene>();
+    sf::Clock clock;
 
-    while (window.isOpen())
-    {
-        float dt = dtClock.restart().asSeconds(); 
-
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
+    while (window.isOpen()) {
+    
+        float dt = clock.restart().asSeconds();
+       
+        currentScene->handleInput(window);
+       
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
+            }
         }
-        gameScene.update(dt, window);
+//        gameScene.update(dt, window);
+        currentScene->update(dt, window);
 
-        window.clear();
-        gameScene.draw(window);
+        window.clear(sf::Color::White); 
+
+        currentScene->draw(window);
+
         window.display();
     }
     return 0;
