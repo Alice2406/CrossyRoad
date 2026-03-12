@@ -1,12 +1,29 @@
 #include "Player.h"
+#include <iostream>
 
-Player::Player()
-    : m_step(50.f)
-    , m_health(100)
+Player::Player() : m_step(32.f), m_sprite(m_texDown)
 {
-    m_shape.setSize({ 50.f, 50.f });
-    m_shape.setFillColor(sf::Color::White);
-    m_shape.setOrigin(m_shape.getSize() / 2.f);
+    if (!m_texUp.loadFromFile("../Asset/Up.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
+    if (!m_texDown.loadFromFile("../Asset/Down.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
+    if (!m_texLeft.loadFromFile("../Asset/Left.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
+    if (!m_texRight.loadFromFile("../Asset/Right.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
+
+    m_sprite.setTexture(m_texDown, true);
+
+    auto texSize = m_texDown.getSize();
+    m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)texSize.x, (int)texSize.y }));
+
+    auto bounds = m_sprite.getLocalBounds();
+    m_sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
+    m_sprite.setScale({ 1.f, 1.f });
+    m_sprite.setColor(sf::Color::White);
+}
+
+sf::Vector2f Player::getIsoPosition() const {
+    sf::Vector2f pos = m_sprite.getPosition();
+    float isoX = (pos.x - pos.y);
+    float isoY = (pos.x + pos.y) * 0.5f;
+    return { isoX + 900.f, isoY + 200.f };
 }
 
 void Player::update()
@@ -14,48 +31,43 @@ void Player::update()
     bool anyKey = false;
     sf::Vector2f moveVec(0.f, 0.f);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
-        moveVec = { -17.f, -m_step }; 
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
+        moveVec = { 0.f, -m_step };
+        m_sprite.setTexture(m_texUp, true);
+        auto size = m_texUp.getSize();
+        m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)size.x, (int)size.y }));
         anyKey = true;
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
-        moveVec = { 17.f, m_step }; 
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+        moveVec = { 0.f, m_step };
+        m_sprite.setTexture(m_texDown);
         anyKey = true;
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-        moveVec = { -m_step, -17.f }; 
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+        moveVec = { -m_step, 0.f };
+        m_sprite.setTexture(m_texLeft);
         anyKey = true;
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-        moveVec = { m_step, 17.f }; 
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+        moveVec = { m_step, 0.f };
+        m_sprite.setTexture(m_texRight);
         anyKey = true;
     }
 
     if (anyKey && !m_moveLocked) {
-        m_shape.move(moveVec);
+        m_sprite.move(moveVec);
         m_moveLocked = true;
     }
     if (!anyKey) m_moveLocked = false;
 }
 
-void Player::draw(sf::RenderWindow& window)
-{
-    sf::Vector2f pos = m_shape.getPosition();
+void Player::draw(sf::RenderWindow& window) {
+    sf::Vector2f logicalPos = m_sprite.getPosition();
 
-    float isoX = (pos.x - pos.y);
-    float isoY = (pos.x + pos.y) * 0.5f;
+    m_sprite.setPosition(getIsoPosition());
 
-    sf::Vector2f originalPos = m_shape.getPosition();
-    float originalRotation = m_shape.getRotation().asDegrees();
-
-    m_shape.setPosition({ isoX + 900.f, isoY + 200.f });
-    m_shape.setRotation(sf::degrees(45.f));
-    m_shape.setScale({ 1.f, 1.f });    
-
-    window.draw(m_shape);
-
-    m_shape.setPosition(originalPos);
-    m_shape.setRotation(sf::degrees(originalRotation));
+    window.draw(m_sprite);
+    m_sprite.setPosition(logicalPos);
 }
 
 void Player::spawn(const sf::Vector2f& position)
@@ -67,3 +79,4 @@ sf::Vector2f Player::getPosition() const
 {
     return m_shape.getPosition();
 }
+
