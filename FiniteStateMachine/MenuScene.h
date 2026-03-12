@@ -13,9 +13,13 @@ public:
 	void draw(sf::RenderWindow& Window) override;
 	//virtual void Destroy();
 
+	bool goToSkin = false; 
+
 private:
 	sf::Font font;
 	sf::Text title;
+	sf::RectangleShape skinButton;
+	sf::Text skinButtonText;
 
 	bool gameStarted = false;
 };
