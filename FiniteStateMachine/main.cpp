@@ -4,7 +4,7 @@
 #include <memory>
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road SFML 3.2");
+    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road ");
     window.setFramerateLimit(60);
 
     std::unique_ptr<Scene> currentScene = std::make_unique<MenuScene>();
@@ -12,7 +12,7 @@ int main() {
 
     while (window.isOpen()) {
         float dt = clock.restart().asSeconds();
-
+        
     
         currentScene->handleInput(window);
 
