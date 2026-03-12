@@ -15,15 +15,15 @@ private:
     sf::Font font;
     sf::Texture chickenTexture;
 
+    sf::RectangleShape backButtonRect; 
+    sf::Sprite backButtonIcon;        
 
-    sf::RectangleShape backButton;
     sf::RectangleShape playButton;
     sf::Text skinNameText;
     sf::Text counterText;
 
-
     std::vector<sf::Sprite> skins;
     int currentIndex = 0;
-    float targetOffset = 0.f; 
+    float targetOffset = 0.f;
     float currentOffset = 0.f;
 };
