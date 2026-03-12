@@ -12,8 +12,8 @@ MenuScene::MenuScene()
 
     title.setCharacterSize(100);
     title.setFillColor(sf::Color::Black);
-    title.setPosition({ 900.f - title.getGlobalBounds().size.x / 2.f, 300.f });
 
+    title.setPosition({ 900.f - title.getGlobalBounds().size.x / 2.f, 300.f });
 
     skinButton.setSize({ 200.f, 60.f });
     skinButton.setFillColor(sf::Color::Blue);
@@ -21,6 +21,7 @@ MenuScene::MenuScene()
 
     skinButtonText.setCharacterSize(30);
     skinButtonText.setFillColor(sf::Color::White);
+    skinButtonText.setString("SKINS");
 
     sf::FloatRect textBounds = skinButtonText.getGlobalBounds();
     skinButtonText.setPosition({
@@ -30,21 +31,34 @@ MenuScene::MenuScene()
 }
 
 void MenuScene::handleInput(sf::RenderWindow& window) {
+
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
         sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+
         if (skinButton.getGlobalBounds().contains(mousePos)) {
             goToSkin = true;
         }
+        else {
+      
+            gameStarted = true;
+        }
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+    {
         gameStarted = true;
     }
 }
 
 void MenuScene::update(float dt) {
     if (gameStarted) {
-        title.move({ -1500.f * dt, 0.f });
+    
+        title.move({ 1500.f * dt, 0.f });
+
     }
 }
 

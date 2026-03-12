@@ -3,14 +3,14 @@
 
 SkinScene::SkinScene()
     : font(),
-    skinNameText(font, "FESTIVE CHICKEN"),
-    counterText(font, "1/3")
+    skinNameText(font, "MISTER ?"),
+    counterText(font, "1/12")
 {
     font.openFromFile("Assets/Arial.ttf");
 
 
-    if (!chickenTexture.loadFromFile("Assets/chicken.png")) {
-        std::cerr << "Note: chicken.png manquant, utilise des placeholders" << std::endl;
+    if (!chickenTexture.loadFromFile("Assets/image.png")) {
+        std::cerr << "Note: image.png manquant, utilise des placeholders" << std::endl;
     }
 
 
@@ -28,7 +28,7 @@ SkinScene::SkinScene()
     skinNameText.setPosition({ 900.f - skinNameText.getGlobalBounds().size.x / 2.f, 100.f });
 
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 12; ++i) {
         sf::Sprite s(chickenTexture);
         s.setOrigin(s.getLocalBounds().getCenter());
         skins.push_back(s);
