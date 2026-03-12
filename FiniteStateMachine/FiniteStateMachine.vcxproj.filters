@@ -23,12 +23,17 @@
 =======
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="SkinScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="MenuScene.h" />
+<<<<<<< HEAD
 >>>>>>> 6aa3592 (debut scene)
+=======
+    <ClInclude Include="SkinScene.h" />
+>>>>>>> 47fa128 (skinscene)
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FiniteStateMachine.rc" />
