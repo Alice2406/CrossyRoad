@@ -28,8 +28,11 @@ GameScene::GameScene()
     m_scoreText.setString("Score: 0");
 }
 
-void GameScene::handleInput(sf::RenderWindow& window) {}
-
+void GameScene::handleInput(sf::RenderWindow& window) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+        requestPause = true;
+    }
+}
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_spawnTimer += dt;
