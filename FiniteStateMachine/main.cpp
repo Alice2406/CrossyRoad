@@ -1,10 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include "MenuScene.h"
 #include "SkinScene.h"
+#include "GameScene.h"
+
 #include <memory>
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road ");
+    sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road");
     window.setFramerateLimit(60);
 
     std::unique_ptr<Scene> currentScene = std::make_unique<MenuScene>();
@@ -12,11 +14,9 @@ int main() {
 
     while (window.isOpen()) {
         float dt = clock.restart().asSeconds();
-        
-    
+
         currentScene->handleInput(window);
 
- 
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -26,6 +26,9 @@ int main() {
         if (MenuScene* menu = dynamic_cast<MenuScene*>(currentScene.get())) {
             if (menu->goToSkin) {
                 currentScene = std::make_unique<SkinScene>();
+            }
+            else if (menu->gameStarted) {
+                currentScene = std::make_unique<GameScene>();
             }
         }
         else if (SkinScene* skin = dynamic_cast<SkinScene*>(currentScene.get())) {
@@ -40,5 +43,6 @@ int main() {
         currentScene->draw(window);
         window.display();
     }
+
     return 0;
 }

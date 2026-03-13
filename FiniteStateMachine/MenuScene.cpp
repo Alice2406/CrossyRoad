@@ -57,7 +57,7 @@ void MenuScene::handleInput(sf::RenderWindow& window) {
     {
         gameStarted = true;
     }
-}void MenuScene::update(float dt) {
+}void MenuScene::update(float dt, sf::RenderWindow& window) {
     if (gameStarted) {
         title.move({ 1500.f * dt, 0.f });
     }

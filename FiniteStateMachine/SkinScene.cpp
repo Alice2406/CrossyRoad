@@ -78,7 +78,7 @@ void SkinScene::handleInput(sf::RenderWindow& window) {
     }
 }
 
-void SkinScene::update(float dt) {
+void SkinScene::update(float dt, sf::RenderWindow& window) {
     targetOffset = currentIndex * -300.f;
     currentOffset += (targetOffset - currentOffset) * 10.f * dt;
 

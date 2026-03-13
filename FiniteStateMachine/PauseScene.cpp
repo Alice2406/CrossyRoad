@@ -1,6 +1,6 @@
 #include "PauseScene.h"
 
-void PauseScene::update(float dt) {
+void PauseScene::update(float dt, sf::RenderWindow& window) {
     remainingTime -= dt;
 
     if (remainingTime <= 0.f) {

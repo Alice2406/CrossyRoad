@@ -6,7 +6,7 @@ class SkinScene : public Scene {
 public:
     SkinScene();
     void handleInput(sf::RenderWindow& window) override;
-    void update(float dt) override;
+    void update(float dt, sf::RenderWindow& window) override;
     void draw(sf::RenderWindow& window) override;
 
     bool backToMenu = false;

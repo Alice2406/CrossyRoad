@@ -140,6 +140,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="PauseScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SkinScene.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="PauseScene.h" />
     <ClInclude Include="Player.h" />
     <ClCompile Include="MenuScene.cpp" />
   </ItemGroup>
