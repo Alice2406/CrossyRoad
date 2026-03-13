@@ -15,7 +15,7 @@ public:
 
 private:
     std::vector<std::vector<int>> m_grid;
-    sf::Texture m_texGrass, m_texRoad, m_texWater;
+    sf::Texture m_texGrass, m_texRoad, m_texWater, m_texTree;
     sf::Sprite m_tileSprite;
 
 };
