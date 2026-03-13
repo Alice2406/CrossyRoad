@@ -1,70 +1,93 @@
 #include "MenuScene.h"
 #include <iostream>
+#include <cmath>
 
 MenuScene::MenuScene()
     : font(),
-    title(font, "CROSSY ROAD"),
-    skinButtonText(font, "SKINS")
+    title(font, "CROSSY DEATH"), 
+    playText(font, "START"),
+    skinText(font, "SKINS"),
+    quitText(font, "QUIT")
 {
     if (!font.openFromFile("Assets/Arial.ttf")) {
         std::cerr << "Erreur : impossible de charger la police !" << std::endl;
     }
 
-    title.setCharacterSize(100);
-    title.setFillColor(sf::Color::Black);
-    title.setPosition({ 900.f - title.getGlobalBounds().size.x / 2.f, 300.f });
+    title.setCharacterSize(120);
+    title.setFillColor(sf::Color(150, 0, 0)); 
+    title.setPosition({ 900.f - title.getGlobalBounds().size.x / 2.f, 150.f });
 
-    skinButton.setSize({ 200.f, 60.f });
-    skinButton.setFillColor(sf::Color::Blue);
-    skinButton.setPosition({ 50.f, 750.f });
+   
+    auto setupBtn = [&](sf::RectangleShape& shape, sf::Text& text, float yPos) {
+        shape.setSize({ 300.f, 60.f });
+        shape.setFillColor(sf::Color(20, 20, 20)); 
+        shape.setOutlineThickness(2.f);
+        shape.setOutlineColor(sf::Color(80, 0, 0)); 
+        shape.setPosition({ 900.f - 150.f, yPos });
 
-    skinButtonText.setCharacterSize(30);
-    skinButtonText.setFillColor(sf::Color::White);
-    skinButtonText.setString("SKINS");
+        text.setCharacterSize(30);
+        text.setFillColor(sf::Color(180, 0, 0));
 
-    sf::FloatRect textBounds = skinButtonText.getGlobalBounds();
-    skinButtonText.setPosition({
-        skinButton.getPosition().x + (200.f - textBounds.size.x) / 2.f,
-        skinButton.getPosition().y + (60.f - textBounds.size.y) / 2.f
-        });
+       
+        sf::FloatRect bounds = text.getGlobalBounds();
+        text.setPosition({
+            shape.getPosition().x + (300.f - bounds.size.x) / 2.f,
+            shape.getPosition().y + (60.f - bounds.size.y) / 2.f - 5.f
+            });
+        };
+
+    setupBtn(playBtn, playText, 400.f);
+    setupBtn(skinBtn, skinText, 500.f);
+    setupBtn(quitBtn, quitText, 600.f);
 }
 
-
 void MenuScene::handleInput(sf::RenderWindow& window) {
+   
+}
 
-    static bool mouseWasReleased = false;
-    if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-        mouseWasReleased = true;
-    }
+void MenuScene::update(float dt, sf::RenderWindow& window) {
+    totalTime += dt;
 
-    if (mouseWasReleased && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-        sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+  
+    float shake = std::sin(totalTime * 25.f) * 2.f;
+    title.setPosition({ 900.f - title.getGlobalBounds().size.x / 2.f + shake, 150.f });
 
-        if (skinButton.getGlobalBounds().contains(mousePos)) {
-            goToSkin = true;
-            mouseWasReleased = false;
+   
+    if (std::rand() % 100 > 95)
+        title.setFillColor(sf::Color(50, 0, 0)); 
+    else
+        title.setFillColor(sf::Color(150, 0, 0));
+
+
+    sf::Vector2i mousePosI = sf::Mouse::getPosition(window);
+    sf::Vector2f mousePos = window.mapPixelToCoords(mousePosI);
+    static bool mouseWasPressed = false;
+
+    auto handleBtn = [&](sf::RectangleShape& b, bool& trigger) {
+        if (b.getGlobalBounds().contains(mousePos)) {
+            b.setOutlineColor(sf::Color::Red); 
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !mouseWasPressed) {
+                trigger = true;
+            }
         }
-        else if (!goToSkin) {
-            gameStarted = true;
+        else {
+            b.setOutlineColor(sf::Color(80, 0, 0));
         }
-    }
+        };
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-    {
-        gameStarted = true;
-    }
-}void MenuScene::update(float dt, sf::RenderWindow& window) {
-    if (gameStarted) {
-        title.move({ 1500.f * dt, 0.f });
-    }
+    handleBtn(playBtn, gameStarted);
+    handleBtn(skinBtn, goToSkin);
+    handleBtn(quitBtn, quitGame);
+
+    mouseWasPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 }
 
 void MenuScene::draw(sf::RenderWindow& window) {
     window.draw(title);
-    window.draw(skinButton);
-    window.draw(skinButtonText);
+    window.draw(playBtn);
+    window.draw(playText);
+    window.draw(skinBtn);
+    window.draw(skinText);
+    window.draw(quitBtn);
+    window.draw(quitText);
 }
