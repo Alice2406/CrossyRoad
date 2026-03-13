@@ -18,6 +18,8 @@ private:
     std::vector<Obstacle> m_obstacles;
     Map m_map;
     sf::View m_view;
-    sf::Clock m_spawnClock;
-    float m_spawnInterval;
+    sf::Texture m_texCar; 
+    std::vector<Obstacle> m_cars; 
+    float m_spawnTimer = 0.f;
+
 };

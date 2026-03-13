@@ -1,34 +1,24 @@
-#pragma once
+#ifndef OBSTACLE_H
+#define OBSTACLE_H
+
 #include <SFML/Graphics.hpp>
 
 class Obstacle {
 public:
-    Obstacle(sf::Vector2f startPos, float speed)
-        : m_pos(startPos), m_speed(speed) {
-        m_shape.setSize({ 50.f, 50.f });
-        m_shape.setFillColor(sf::Color::Red);
-        m_shape.setOrigin({ 32.f, 32.f });
-    }
+    // Le constructeur : il reçoit la texture, la position de départ et la vitesse
+    Obstacle(sf::Texture& tex, sf::Vector2f gridPos, float speed);
 
-    void update(float dt) {
-        m_pos.x += m_speed * dt;
-        m_pos.y += (m_speed * (27.f / 80.f)) * dt; 
-    }
+    void update(float dt);
+    void draw(sf::RenderWindow& window);
 
-    void draw(sf::RenderWindow& window) {
-        float isoX = (m_pos.x - m_pos.y);
-        float isoY = (m_pos.x + m_pos.y) * 0.5f;
-
-        m_shape.setPosition({ isoX + 900.f, isoY + 200.f });
-        m_shape.setRotation(sf::degrees(45.f));
-        window.draw(m_shape);
-    }
-
-    sf::Vector2f getPosition() const { return m_pos; }
+    // CETTE FONCTION DOIT ÊTRE ICI (DANS PUBLIC)
+    // Elle permet à GameScene de savoir où est la voiture
+    float getGridX() const { return m_gridPos.x; }
 
 private:
-    sf::RectangleShape m_shape;
-    sf::Vector2f m_pos;
+    sf::Sprite m_sprite;
+    sf::Vector2f m_gridPos; // Position dans la grille (ex: 5.0, 2.0)
     float m_speed;
 };
 
+#endif

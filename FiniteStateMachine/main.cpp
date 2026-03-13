@@ -8,7 +8,7 @@
 int main() {
     sf::RenderWindow window(sf::VideoMode({ 1800, 900 }), "Crossy Road");
     window.setFramerateLimit(60);
-
+    srand(static_cast<unsigned int>(time(NULL)));
     std::unique_ptr<Scene> currentScene = std::make_unique<MenuScene>();
     sf::Clock clock;
 

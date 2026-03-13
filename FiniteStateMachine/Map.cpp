@@ -5,9 +5,13 @@
 
 Map::Map() : m_tileSprite(m_texGrass) {
 
-    if (!m_texGrass.loadFromFile("../Asset/grass.png") ||
-        !m_texRoad.loadFromFile("../Asset/road.png") ||
-        !m_texWater.loadFromFile("../Asset/water.png"))
+    if (!m_texGrass.loadFromFile("../Asset/grass2.png") ||
+        !m_texRoad.loadFromFile("../Asset/grass2.png") ||
+        !m_texTree.loadFromFile("../Asset/arbre.png") ||
+        !m_texTree2.loadFromFile("../Asset/arbre2.png") ||
+        !m_texTree3.loadFromFile("../Asset/arbre3.png") ||
+        !m_texgrave.loadFromFile("../Asset/tombe22.png") ||
+        !m_texWater.loadFromFile("../Asset/water2.png"))
     {
         std::cerr << "Erreur : Impossible de charger une ou plusieurs textures !" << std::endl;
     }
@@ -44,27 +48,46 @@ void Map::loadFromFile(const std::string& filename) {
 void Map::draw(sf::RenderWindow& window) {
     if (m_grid.empty()) return;
 
+    // Valeurs standards pour un losange de 64px de large
+    const float HALF_WIDTH = 32.f;
+    const float HALF_HEIGHT = 24.f;
+
     const float OFFSET_X = 900.f;
     const float OFFSET_Y = 200.f;
-    const float HALF_WIDTH = 32.f;
-    const float HALF_HEIGHT = 16.f;
 
-    for (int y = 0; y < m_grid.size(); ++y) {
-        for (int x = 0; x < m_grid[y].size(); ++x) {
+    for (int y = 0; y < (int)m_grid.size(); ++y) {
+        for (int x = 0; x < (int)m_grid[y].size(); ++x) {
 
             int type = m_grid[y][x];
-            if (type == 0) m_tileSprite.setTexture(m_texGrass, true);
-            else if (type == 1) m_tileSprite.setTexture(m_texRoad, true);
+            if (type == 0 || type == 3) m_tileSprite.setTexture(m_texGrass, true);
+            else if (type == 1 || type == 4) m_tileSprite.setTexture(m_texRoad, true);
             else if (type == 2) m_tileSprite.setTexture(m_texWater, true);
+
+            // Comme tes images font 64x64, on force l'origine à 32,32
+            // Si les tuiles flottent, essaie 32, 48 (pour les poser plus bas)
+            m_tileSprite.setOrigin({ 32.f, 32.f });
 
             float isoX = (x - y) * HALF_WIDTH;
             float isoY = (x + y) * HALF_HEIGHT;
 
-            m_tileSprite.setOrigin({ 32.f, 32.f });
-
             m_tileSprite.setPosition({ isoX + OFFSET_X, isoY + OFFSET_Y });
-            m_tileSprite.setScale({ 2.f, 2.f });
             window.draw(m_tileSprite);
+            if (type == 3) {
+                int fixedRandom = (x + y * 31) % 3;
+
+                if (fixedRandom == 0)      m_tileSprite.setTexture(m_texTree, true);
+                else if (fixedRandom == 1) m_tileSprite.setTexture(m_texTree2, true);
+                else                       m_tileSprite.setTexture(m_texTree3, true);
+
+                m_tileSprite.setOrigin({ 32.f, 64.f });
+                window.draw(m_tileSprite);
+            }
+            if (type == 4) {
+                m_tileSprite.setTexture(m_texgrave, true);
+
+                m_tileSprite.setOrigin({ 32.f, 48.f });
+                window.draw(m_tileSprite);
+            }
         }
     }
 }
