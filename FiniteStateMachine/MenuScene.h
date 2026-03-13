@@ -12,13 +12,24 @@ public:
     void draw(sf::RenderWindow& window) override;
 
     bool goToSkin = false;
-    bool isGameStarted() const { return gameStarted; }
     bool gameStarted = false;
+    bool quitGame = false;
 
 private:
     sf::Font font;
     sf::Text title;
-    sf::RectangleShape skinButton;
-    sf::Text skinButtonText;
 
+    // Boutons
+    sf::RectangleShape playBtn;
+    sf::Text playText;
+
+    sf::RectangleShape skinBtn;
+    sf::Text skinText;
+
+    sf::RectangleShape quitBtn;
+    sf::Text quitText;
+
+    float totalTime = 0.0f;
 };
+
+

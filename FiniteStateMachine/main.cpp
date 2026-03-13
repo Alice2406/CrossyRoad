@@ -23,8 +23,12 @@ int main() {
             }
         }
 
+        currentScene->handleInput(window);
         if (MenuScene* menu = dynamic_cast<MenuScene*>(currentScene.get())) {
-            if (menu->goToSkin) {
+            if (menu->quitGame) {
+                window.close();
+            }
+            else if (menu->goToSkin) {
                 currentScene = std::make_unique<SkinScene>();
             }
             else if (menu->gameStarted) {
@@ -39,10 +43,15 @@ int main() {
 
         currentScene->update(dt, window);
 
-        window.clear(sf::Color::White);
+        window.clear(sf::Color::Black);
         currentScene->draw(window);
         window.display();
     }
 
     return 0;
 }
+
+
+
+
+
