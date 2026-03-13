@@ -11,6 +11,7 @@
     <ClCompile Include="SkinScene.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GameOverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameScene.h" />
@@ -23,6 +24,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SkinScene.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameOverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FiniteStateMachine.rc" />

@@ -2,7 +2,7 @@
 #include "MenuScene.h"
 #include "SkinScene.h"
 #include "GameScene.h"
-
+#include "GameOverScene.h"
 #include <memory>
 
 int main() {
@@ -36,13 +36,24 @@ int main() {
                 currentScene = std::make_unique<MenuScene>();
             }
         }
-
+        else if (GameScene* game = dynamic_cast<GameScene*>(currentScene.get())) {
+            if (game->isGameOver) {
+                int finalScore = game->getScore();
+                currentScene = std::make_unique<GameOverScene>(finalScore);
+            }
+        }
+        else if (GameOverScene* gameOver = dynamic_cast<GameOverScene*>(currentScene.get())) {
+            if (gameOver->retryGame) {
+                currentScene = std::make_unique<GameScene>();
+            }
+            else if (gameOver->backToMenu) {
+                currentScene = std::make_unique<MenuScene>();
+            }
+        }
         currentScene->update(dt, window);
-
         window.clear(sf::Color::White);
         currentScene->draw(window);
         window.display();
     }
-
     return 0;
 }
