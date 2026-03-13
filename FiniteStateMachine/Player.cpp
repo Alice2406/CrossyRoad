@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player() : m_step(32.f), m_sprite(m_texDown)
+Player::Player() : m_step(40.f), m_sprite(m_texDown)
 {
     if (!m_texUp.loadFromFile("../Asset/Up.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
     if (!m_texDown.loadFromFile("../Asset/Down.png")) { std::cout << "ERREUR : Impossible de trouver player_down.png" << std::endl; }
@@ -32,24 +32,24 @@ void Player::update()
     sf::Vector2f moveVec(0.f, 0.f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
-        moveVec = { 0.f, -m_step };
+        moveVec = { -8.f, -m_step };
         m_sprite.setTexture(m_texUp, true);
         auto size = m_texUp.getSize();
         m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)size.x, (int)size.y }));
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
-        moveVec = { 0.f, m_step };
+        moveVec = {8.f, m_step };
         m_sprite.setTexture(m_texDown);
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-        moveVec = { -m_step, 0.f };
+        moveVec = { -m_step, -8.f };
         m_sprite.setTexture(m_texLeft);
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-        moveVec = { m_step, 0.f };
+        moveVec = { m_step, 8.f };
         m_sprite.setTexture(m_texRight);
         anyKey = true;
     }

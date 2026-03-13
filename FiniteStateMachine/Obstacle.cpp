@@ -1,4 +1,5 @@
 #include "Obstacle.h"
+#include <iostream>
 
 Obstacle::Obstacle(sf::Texture& tex, sf::Vector2f gridPos, float speed)
     : m_sprite(tex),       
@@ -22,9 +23,5 @@ void Obstacle::draw(sf::RenderWindow& window) {
     float isoY = (m_gridPos.x + m_gridPos.y) * HALF_HEIGHT + OFFSET_Y;
 
     m_sprite.setPosition({ isoX, isoY });
-    sf::CircleShape debugCircle(20.f);
-    debugCircle.setFillColor(sf::Color::Red);
-    debugCircle.setPosition({ isoX, isoY });
-    window.draw(debugCircle);
     window.draw(m_sprite);
 }

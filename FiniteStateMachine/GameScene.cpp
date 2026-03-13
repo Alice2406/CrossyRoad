@@ -9,7 +9,9 @@ GameScene::GameScene()
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
     m_player.spawn({ 290.f, 777.f });
-
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 0.f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 24.f), 3.0f));
     m_view.setSize({ 1800.f, 900.f });
 }
 
@@ -21,28 +23,29 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_spawnTimer += dt;
 
-
-    // Toutes les 3 secondes, on crée une nouvelle voiture
     if (m_spawnTimer >= 3.0f) {
+        std::cout << "SPAWN !" << std::endl;
         m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 0.f), 3.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.f), 3.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 24.f), 3.0f));
+
+
         m_spawnTimer = 0.f;
     }
 
-    // On met à jour et on nettoie les voitures sorties de la map
-    for (auto it = m_obstacles.begin(); it != m_obstacles.end();) {
+    for (auto it = m_cars.begin(); it != m_cars.end();) {
         it->update(dt);
 
-        if (it->getGridX() > 20.f) { // Si dépasse la case 20
-            it = m_obstacles.erase(it); // Supprime
+        if (it->getGridX() > 42.f) {
+            it = m_cars.erase(it);
         }
         else {
             ++it;
         }
     }
-    m_player.update();
 
+    m_player.update();
     sf::Vector2f playerScreenPos = m_player.getIsoPosition();
-	std::cout << "Player screen position: (" << playerScreenPos.x << ", " << playerScreenPos.y << ")\n";
     m_view.setCenter(playerScreenPos);
 }
 
