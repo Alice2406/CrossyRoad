@@ -42,21 +42,19 @@ int main() {
             }
         }
 
-        // ... après les autres checks de dynamic_cast ...
-      // ... (tes autres dynamic_cast pour Menu et Skin) ...
+     
 
         else if (GameScene* game = dynamic_cast<GameScene*>(currentScene.get())) {
             if (game->requestPause) {
-                // On donne la GameScene à la PauseScene
+             
                 currentScene = std::make_unique<PauseScene>(std::move(currentScene));
             }
         }
         else if (PauseScene* pause = dynamic_cast<PauseScene*>(currentScene.get())) {
             if (pause->resumeGame) {
-                // On récupère la GameScene
+            
                 std::unique_ptr<Scene> gameBack = std::move(pause->m_backgroundScene);
 
-                // IMPORTANT : On reset le bouton pause pour ne pas reboucler !
                 if (GameScene* g = dynamic_cast<GameScene*>(gameBack.get())) {
                     g->requestPause = false;
                 }
