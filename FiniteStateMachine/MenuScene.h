@@ -19,7 +19,7 @@ private:
     sf::Font font;
     sf::Text title;
 
-    // Boutons
+ 
     sf::RectangleShape playBtn;
     sf::Text playText;
 
