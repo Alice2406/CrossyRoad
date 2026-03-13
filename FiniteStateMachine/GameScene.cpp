@@ -10,9 +10,9 @@ GameScene::GameScene()
 		std::cerr << "Erreur : Impossible de charger la texture de la voiture !" << std::endl;
     }
     m_map.loadFromFile("../Asset/Plaintext.txt");
-    m_player.spawn({ 510.f, 2080.f });
+    //m_player.spawn({ 510.f, 2080.f });
 
-    m_player.spawn({ 290.f, 777.f });
+    m_player.spawn({ 295.f, 777.f });
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 0.f), 3.0f));
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.f), 3.0f));
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 24.f), 3.0f));
