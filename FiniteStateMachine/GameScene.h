@@ -2,8 +2,10 @@
 #include "Scene.h"
 #include "Player.h"
 #include "Obstacle.h"
-#include <vector>
 #include "Map.h"
+#include "Camera.h"
+#include <vector>
+
 class GameScene : public Scene
 {
 public:
@@ -17,7 +19,11 @@ private:
     Player m_player;
     std::vector<Obstacle> m_obstacles;
     Map m_map;
-    sf::View m_view;
+    Camera m_camera;
     sf::Clock m_spawnClock;
     float m_spawnInterval;
+
+    sf::Font m_font;
+    sf::Text m_scoreText;
+    int m_highScore = 0;
 };

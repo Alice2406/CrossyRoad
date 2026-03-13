@@ -1,46 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-<<<<<<< HEAD
-    <ClCompile Include="Player.cpp">
-      <Filter>Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Obstacle.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Obstacle.cpp" />
+    <ClCompile Include="PauseScene.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SkinScene.cpp" />
+    <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Player.h">
-      <Filter>Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Obstacle.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Map.h" />
-=======
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
-    <ClCompile Include="SkinScene.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="PauseScene.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="MenuScene.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="MenuScene.h" />
-<<<<<<< HEAD
->>>>>>> 6aa3592 (debut scene)
-=======
     <ClInclude Include="SkinScene.h" />
->>>>>>> 47fa128 (skinscene)
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FiniteStateMachine.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Player">
-      <UniqueIdentifier>{ceff5bc6-adb3-4180-9fee-d8375904d689}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>
