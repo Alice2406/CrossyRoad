@@ -4,10 +4,13 @@
 #include "Obstacle.h"
 #include <vector>
 #include "Map.h"
+
+
 class GameScene : public Scene
 {
 public:
     GameScene();
+    bool requestPause = false;
 
     void handleInput(sf::RenderWindow& window) override;
     void update(float dt, sf::RenderWindow& window) override;

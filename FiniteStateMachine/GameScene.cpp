@@ -10,10 +10,11 @@ GameScene::GameScene()
     m_view.setSize({ 1800.f, 900.f });
 }
 
-void GameScene::handleInput(sf::RenderWindow& window)
-{
+void GameScene::handleInput(sf::RenderWindow& window) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
+        requestPause = true;
+    }
 }
-
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_player.update();
