@@ -10,12 +10,11 @@ GameScene::GameScene()
 		std::cerr << "Erreur : Impossible de charger la texture de la voiture !" << std::endl;
     }
     m_map.loadFromFile("../Asset/Plaintext.txt");
-    //m_player.spawn({ 510.f, 2080.f });
 
-    m_player.spawn({ 295.f, 777.f });
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 0.f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 24.f), 3.0f));
+    m_player.spawn({ 10.f, 30.f });
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 1.5f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.5f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 26.5f), 3.0f));
     if (!m_font.openFromFile("Assets/Arial.ttf")) {
         m_font.openFromFile("../Asset/Arial.ttf");
     }
@@ -33,22 +32,26 @@ void GameScene::handleInput(sf::RenderWindow& window) {
         requestPause = true;
     }
 }
+
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_spawnTimer += dt;
-
     if (m_spawnTimer >= 3.0f) {
-        std::cout << "SPAWN !" << std::endl;
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 0.f), 3.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.f), 3.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 24.f), 3.0f));
-
-
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 1.5f), 4.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 12.5f), 4.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 26.5f), 4.0f));
         m_spawnTimer = 0.f;
     }
 
+    m_player.update(dt, m_map);
+
     for (auto it = m_cars.begin(); it != m_cars.end();) {
         it->update(dt);
+
+        if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
+            std::cout << "MORT !" << std::endl;
+            m_player.spawn({ 0.f, 30.f });
+        }
 
         if (it->getGridX() > 42.f) {
             it = m_cars.erase(it);
@@ -58,22 +61,12 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         }
     }
 
-    m_player.update();
-    sf::Vector2f playerScreenPos = m_player.getIsoPosition();
-    m_player.update();
     m_camera.update(dt, m_player.getPosition());
 
-    int playerRow = static_cast<int>(m_player.getPosition().y / 32.f);
-    int startRow = static_cast<int>(2096.f / 32.f);
-    int calculatedScore = startRow - playerRow;
-
+    int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
     if (calculatedScore > m_highScore) {
         m_highScore = calculatedScore;
         m_scoreText.setString("Score: " + std::to_string(m_highScore));
-    }
-
-    if (m_player.getIsoPosition().y > m_camera.getScreenBottom()) {
-        std::cout << "Mort" << std::endl;
     }
 }
 
@@ -83,9 +76,31 @@ void GameScene::draw(sf::RenderWindow& window)
     m_map.draw(window);
     for (auto& car : m_cars) {
         car.draw(window);
+
+        sf::FloatRect box = car.getGridBounds();
+        sf::ConvexShape debugShape(4);
+
+        debugShape.setPoint(0, gridToIso({ box.position.x, box.position.y }));
+        debugShape.setPoint(1, gridToIso({ box.position.x + box.size.x, box.position.y }));
+        debugShape.setPoint(2, gridToIso({ box.position.x + box.size.x, box.position.y + box.size.y }));
+        debugShape.setPoint(3, gridToIso({ box.position.x, box.position.y + box.size.y }));
+
+        debugShape.setFillColor(sf::Color(255, 0, 0, 100));
+        window.draw(debugShape);
     }
     m_player.draw(window);
 
     window.setView(window.getDefaultView());
     window.draw(m_scoreText);
+}
+
+sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) {
+    const float HALF_WIDTH = 32.f;
+    const float HALF_HEIGHT = 24.f;
+    const float OFFSET_X = 900.f;
+    const float OFFSET_Y = 200.f;
+
+    float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
+    float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
+    return sf::Vector2f({ isoX, isoY });
 }

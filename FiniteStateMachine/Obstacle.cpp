@@ -25,3 +25,17 @@ void Obstacle::draw(sf::RenderWindow& window) {
     m_sprite.setPosition({ isoX, isoY });
     window.draw(m_sprite);
 }
+
+sf::FloatRect Obstacle::getGridBounds() const {
+    float width = 0.7f;
+    float height = 0.8f; // La zone de contact au sol est assez fine
+
+    // On peut ajouter un offset si m_gridPos représente le centre du sprite
+    // Mais si m_gridPos représente la base, on ajuste simplement ainsi :
+    float offsetY = 0.3f; // Ajuste cette valeur pour monter/descendre la box
+
+    return sf::FloatRect(
+        { m_gridPos.x - width / 2.f, m_gridPos.y - height / 2.f + offsetY },
+        { width, height }
+    );
+}

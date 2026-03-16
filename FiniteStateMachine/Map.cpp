@@ -19,6 +19,23 @@ Map::Map() : m_tileSprite(m_texGrass) {
     m_tileSprite.setOrigin({ 32.f, 32.f });
 }
 
+bool Map::isWalkable(float x, float y) {
+    int gx = static_cast<int>(x);
+    int gy = static_cast<int>(y);
+
+    if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
+        return false;
+    }
+
+    int tileType = m_grid[gy][gx];
+
+    if (tileType == 3 || tileType == 4) {
+        return false;
+    }
+
+    return true;
+}
+
 void Map::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -48,7 +65,6 @@ void Map::loadFromFile(const std::string& filename) {
 void Map::draw(sf::RenderWindow& window) {
     if (m_grid.empty()) return;
 
-    // Valeurs standards pour un losange de 64px de large
     const float HALF_WIDTH = 32.f;
     const float HALF_HEIGHT = 24.f;
 
@@ -63,8 +79,6 @@ void Map::draw(sf::RenderWindow& window) {
             else if (type == 1 || type == 4) m_tileSprite.setTexture(m_texRoad, true);
             else if (type == 2) m_tileSprite.setTexture(m_texWater, true);
 
-            // Comme tes images font 64x64, on force l'origine à 32,32
-            // Si les tuiles flottent, essaie 32, 48 (pour les poser plus bas)
             m_tileSprite.setOrigin({ 32.f, 32.f });
 
             float isoX = (x - y) * HALF_WIDTH;

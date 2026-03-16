@@ -13,45 +13,68 @@ Player::Player() : m_step(40.f), m_sprite(m_texDown)
     m_sprite.setTextureRect(sf::IntRect({ 0, 0 }, { (int)texSize.x, (int)texSize.y }));
 
     auto bounds = m_sprite.getLocalBounds();
-    m_sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
+    m_sprite.setOrigin({ bounds.size.x / 2.f, bounds.size.y });
+}
+
+sf::FloatRect Player::getGridBounds() const {
+    return sf::FloatRect({ m_gridPos.x - 0.2f, m_gridPos.y - 0.2f }, { 0.4f, 0.4f });
 }
 
 sf::Vector2f Player::getIsoPosition() const {
-    float isoX = (m_basePos.x - m_basePos.y) + 900.f;
-    float isoY = (m_basePos.x + m_basePos.y) * 0.5f + 200.f;
+    const float HALF_WIDTH = 32.f;
+    const float HALF_HEIGHT = 24.f;
+    const float OFFSET_X = 900.f; 
+    const float OFFSET_Y = 200.f;
+
+    float isoX = (m_gridPos.x - m_gridPos.y) * HALF_WIDTH + OFFSET_X;
+    float isoY = (m_gridPos.x + m_gridPos.y) * HALF_HEIGHT + OFFSET_Y;
     return { isoX, isoY };
 }
-
-void Player::update()
+void Player::update(float dt, Map& map)
 {
     bool anyKey = false;
     sf::Vector2f moveVec(0.f, 0.f);
+    sf::Vector2f gridDir(0.f, 0.f); 
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
         moveVec = { -8.f, -m_step };
+        gridDir = { 0.f, -1.f }; 
         m_sprite.setTexture(m_texUp, true);
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
-        moveVec = {8.f, m_step };
-        m_sprite.setTexture(m_texDown);
+        moveVec = { 8.f, m_step };
+        gridDir = { 0.f, 1.f }; 
+        m_sprite.setTexture(m_texDown, true);
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
         moveVec = { -m_step, -8.f };
-        m_sprite.setTexture(m_texLeft);
+        gridDir = { -1.f, 0.f }; 
+        m_sprite.setTexture(m_texLeft, true);
         anyKey = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
         moveVec = { m_step, 8.f };
-        m_sprite.setTexture(m_texRight);
+        gridDir = { 1.f, 0.f }; 
+        m_sprite.setTexture(m_texRight, true);
         anyKey = true;
     }
 
     if (anyKey && !m_moveLocked) {
-        m_basePos += moveVec;
+        sf::Vector2f nextGridPos = m_gridPos + gridDir;
+
+        if (map.isWalkable(nextGridPos.x, nextGridPos.y)) {
+            m_basePos += moveVec;
+            m_gridPos = nextGridPos;
+        }
+        else {
+            std::cout << "MUR : Passage bloque en (" << nextGridPos.x << "," << nextGridPos.y << ")" << std::endl;
+        }
+
         m_moveLocked = true;
     }
+
     if (!anyKey) m_moveLocked = false;
 }
 
@@ -60,9 +83,10 @@ void Player::draw(sf::RenderWindow& window) {
     window.draw(m_sprite);
 }
 
-void Player::spawn(const sf::Vector2f& position)
+void Player::spawn(const sf::Vector2f& gridPosition)
 {
-    m_basePos = position;
+    m_gridPos = gridPosition;
+    m_basePos = getIsoPosition();
 }
 
 sf::Vector2f Player::getPosition() const

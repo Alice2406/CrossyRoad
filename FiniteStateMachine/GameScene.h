@@ -15,7 +15,7 @@ public:
     void handleInput(sf::RenderWindow& window) override;
     void update(float dt, sf::RenderWindow& window) override;
     void draw(sf::RenderWindow& window) override;
-
+    sf::Vector2f gridToIso(sf::Vector2f gridPos);
 private:
     Player m_player;
     std::vector<Obstacle> m_obstacles;
