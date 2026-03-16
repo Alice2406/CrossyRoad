@@ -11,6 +11,11 @@ public:
     void spawn(const sf::Vector2f& position);
     sf::Vector2f getPosition() const;
     sf::Vector2f getIsoPosition() const;
+
+    bool isInvincible = false;
+    int lives = 1;
+    sf::FloatRect getBounds() const { return m_sprite.getGlobalBounds(); }
+
 private:
     sf::Vector2f m_basePos;
     sf::RectangleShape m_shape;

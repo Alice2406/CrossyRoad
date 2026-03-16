@@ -11,7 +11,8 @@ Map::Map() : m_tileSprite(m_texGrass) {
         !m_texTree2.loadFromFile("../Asset/arbre2.png") ||
         !m_texTree3.loadFromFile("../Asset/arbre3.png") ||
         !m_texgrave.loadFromFile("../Asset/tombe22.png") ||
-        !m_texWater.loadFromFile("../Asset/water2.png"))
+        !m_texWater.loadFromFile("../Asset/water2.png")) ||
+        !m_texPowerUp.loadFromFile("../Asset/PowerUp.png"))
     {
         std::cerr << "Erreur : Impossible de charger une ou plusieurs textures !" << std::endl;
     }
@@ -85,6 +86,19 @@ void Map::draw(sf::RenderWindow& window) {
             if (type == 4) {
                 m_tileSprite.setTexture(m_texgrave, true);
 
+                m_tileSprite.setOrigin({ 32.f, 48.f });
+                window.draw(m_tileSprite);
+            }
+            if (type == 5) {
+               
+                m_tileSprite.setTexture(m_texGrass, true);
+                m_tileSprite.setOrigin({ 32.f, 32.f });
+                m_tileSprite.setPosition({ isoX + OFFSET_X, isoY + OFFSET_Y });
+                window.draw(m_tileSprite);
+
+               
+                m_tileSprite.setTexture(m_texPowerUp, true);
+               
                 m_tileSprite.setOrigin({ 32.f, 48.f });
                 window.draw(m_tileSprite);
             }
