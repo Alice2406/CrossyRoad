@@ -23,6 +23,7 @@ private:
     Map m_map;
 
     sf::Texture m_texCar; 
+    sf::Texture m_texFleau;
     std::vector<Obstacle> m_cars; 
     float m_spawnTimer = 0.f;
 	float m_logTimer = 0.f;

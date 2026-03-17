@@ -7,20 +7,28 @@ GameScene::GameScene()
     m_scoreText(m_font)
 {
     if (!m_texCar.loadFromFile("../Asset/scie.png")) {
-		std::cerr << "Erreur : Impossible de charger la texture de la voiture !" << std::endl;
+		std::cerr << "Erreur : scie.png introuvable !" << std::endl;
     }
     if (!m_texLog.loadFromFile("../Asset/cercueil.png")) {
-        std::cerr << "Erreur : buche.png introuvable !" << std::endl;
+        std::cerr << "Erreur : cercueil.png introuvable !" << std::endl;
+    }
+    if (!m_texFleau.loadFromFile("../Asset/fleau.png")) {
+        std::cerr << "Erreur : fleau.png introuvable !" << std::endl;
     }
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
     m_player.spawn({ 10.f, 30.f });
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 1.5f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.5f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 26.5f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 1.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 12.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 3.0f));
 
-    m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 24.5f), 2.0f));
-    m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 23.5f), 2.0f));
+    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 25.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
+
+    m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
+    m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
     if (!m_font.openFromFile("Assets/Arial.ttf")) {
         m_font.openFromFile("../Asset/Arial.ttf");
     }
@@ -42,16 +50,14 @@ void GameScene::handleInput(sf::RenderWindow& window) {
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_logTimer += dt;
-    if (m_logTimer >= 2.5f) { // Toutes les 2.5 secondes
-        // On spawn une bûche à gauche (X = -5) sur la ligne de la rivière (Y = 10)
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 24.5f), 2.0f));
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 23.5f), 2.0f));
+    if (m_logTimer >= 2.f) { 
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
         m_logTimer = 0.f;
     }
 
-    // Nettoyage des bûches sorties de l'écran
     for (auto it = m_logs.begin(); it != m_logs.end(); ) {
-        if (it->getGridPos().x > 50.f) { // Si elle dépasse la largeur de ta map
+        if (it->getGridPos().x > 50.f) { 
             it = m_logs.erase(it);
         }
         else {
@@ -60,9 +66,13 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
     m_spawnTimer += dt;
     if (m_spawnTimer >= 3.0f) {
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 1.5f), 4.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 12.5f), 4.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 26.5f), 4.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 1.7f), 4.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 12.7f), 4.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
+        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 4.0f));
+        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 25.7f), 3.0f));
+        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
+        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
         m_spawnTimer = 0.f;
     }
 
@@ -151,12 +161,9 @@ void GameScene::draw(sf::RenderWindow& window)
         //window.draw(debugShape);
     }
     for (auto& log : m_logs) {
-        // On convertit la position grille en ISO pour le dessin
         sf::Vector2f isoPos = gridToIso(log.getGridPos());
 
-        // Si tu as accès au sprite de la bûche, positionne-le
-        // log.setPosition(isoPos); 
-        log.draw(window, *this); // Utilise ta fonction de dessin
+        log.draw(window, *this);
     }
     m_player.draw(window);
 

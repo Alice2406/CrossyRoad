@@ -6,7 +6,7 @@
 Map::Map() : m_tileSprite(m_texGrass) {
 
     if (!m_texGrass.loadFromFile("../Asset/grass2.png") ||
-        !m_texRoad.loadFromFile("../Asset/grass2.png") ||
+        !m_texRoad.loadFromFile("../Asset/rails.png") ||
         !m_texTree.loadFromFile("../Asset/arbre.png") ||
         !m_texTree2.loadFromFile("../Asset/arbre2.png") ||
         !m_texTree3.loadFromFile("../Asset/arbre3.png") ||
@@ -88,8 +88,8 @@ void Map::draw(sf::RenderWindow& window) {
         for (int x = 0; x < (int)m_grid[y].size(); ++x) {
 
             int type = m_grid[y][x];
-            if (type == 0 || type == 3) m_tileSprite.setTexture(m_texGrass, true);
-            else if (type == 1 || type == 4) m_tileSprite.setTexture(m_texRoad, true);
+            if (type == 0 || type == 3 || type == 4) m_tileSprite.setTexture(m_texGrass, true);
+            else if (type == 1) m_tileSprite.setTexture(m_texRoad, true);
             else if (type == 2) m_tileSprite.setTexture(m_texWater, true);
 
             m_tileSprite.setOrigin({ 32.f, 32.f });
