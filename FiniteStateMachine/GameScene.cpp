@@ -9,12 +9,18 @@ GameScene::GameScene()
     if (!m_texCar.loadFromFile("../Asset/scie.png")) {
 		std::cerr << "Erreur : Impossible de charger la texture de la voiture !" << std::endl;
     }
+    if (!m_texLog.loadFromFile("../Asset/cercueil.png")) {
+        std::cerr << "Erreur : buche.png introuvable !" << std::endl;
+    }
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
     m_player.spawn({ 10.f, 30.f });
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 1.5f), 3.0f));
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 12.5f), 3.0f));
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(0.f, 26.5f), 3.0f));
+
+    m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 24.5f), 2.0f));
+    m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 23.5f), 2.0f));
     if (!m_font.openFromFile("Assets/Arial.ttf")) {
         m_font.openFromFile("../Asset/Arial.ttf");
     }
@@ -35,6 +41,23 @@ void GameScene::handleInput(sf::RenderWindow& window) {
 
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
+    m_logTimer += dt;
+    if (m_logTimer >= 2.5f) { // Toutes les 2.5 secondes
+        // On spawn une bûche à gauche (X = -5) sur la ligne de la rivière (Y = 10)
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 24.5f), 2.0f));
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(0.f, 23.5f), 2.0f));
+        m_logTimer = 0.f;
+    }
+
+    // Nettoyage des bûches sorties de l'écran
+    for (auto it = m_logs.begin(); it != m_logs.end(); ) {
+        if (it->getGridPos().x > 50.f) { // Si elle dépasse la largeur de ta map
+            it = m_logs.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
     m_spawnTimer += dt;
     if (m_spawnTimer >= 3.0f) {
         m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-5.f, 1.5f), 4.0f));
@@ -44,6 +67,33 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
 
     m_player.update(dt, m_map);
+
+    sf::Vector2f pPos = m_player.getGridPos();
+
+    bool onLog = false;
+    float currentLogSpeed = 0.f;
+
+    // 1. On met à jour et on teste les bûches
+    for (auto& l : m_logs) {
+        l.update(dt);
+        if (m_player.getGridBounds().findIntersection(l.getGridBounds())) {
+            onLog = true;
+            currentLogSpeed = l.getSpeed();
+        }
+    }
+
+    // 2. Gestion de l'eau
+    if (m_map.isWater(pPos.x, pPos.y)) {
+        if (onLog) {
+            // Le courant emporte le joueur (mouvement horizontal)
+            m_player.setGridPos({ pPos.x + currentLogSpeed * dt, pPos.y });
+        }
+        else {
+            std::cout << "PLOUF !" << std::endl;
+            m_player.spawn({ 15.f, 30.f }); // Position de départ
+            return;
+        }
+    }
 
     for (auto it = m_cars.begin(); it != m_cars.end();) {
         it->update(dt);
@@ -86,7 +136,15 @@ void GameScene::draw(sf::RenderWindow& window)
         debugShape.setPoint(3, gridToIso({ box.position.x, box.position.y + box.size.y }));
 
         debugShape.setFillColor(sf::Color(255, 0, 0, 100));
-        window.draw(debugShape);
+        //window.draw(debugShape);
+    }
+    for (auto& log : m_logs) {
+        // On convertit la position grille en ISO pour le dessin
+        sf::Vector2f isoPos = gridToIso(log.getGridPos());
+
+        // Si tu as accès au sprite de la bûche, positionne-le
+        // log.setPosition(isoPos); 
+        log.draw(window, *this); // Utilise ta fonction de dessin
     }
     m_player.draw(window);
 

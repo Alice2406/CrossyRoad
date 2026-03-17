@@ -9,9 +9,11 @@ public:
     void update(float dt, Map& map);
     void draw(sf::RenderWindow& window);
     void spawn(const sf::Vector2f& position);
+    sf::Vector2f getGridPos() const { return m_gridPos; }
     sf::Vector2f getPosition() const;
     sf::Vector2f getIsoPosition() const;
     sf::FloatRect getGridBounds() const;
+    void setGridPos(sf::Vector2f newPos) { m_gridPos = newPos; }
 private:
     sf::Vector2f m_gridPos;
     sf::Vector2f m_basePos;

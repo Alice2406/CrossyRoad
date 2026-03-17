@@ -11,6 +11,7 @@ public:
     void loadFromFile(const std::string& filename);
     void draw(sf::RenderWindow& window);
     bool isWalkable(float x, float y);
+	bool isWater(float x, float y) const;
     std::vector<std::vector<int>>& getGrid() { return m_grid; }
 
 private:

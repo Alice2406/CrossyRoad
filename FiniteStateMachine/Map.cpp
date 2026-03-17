@@ -36,6 +36,19 @@ bool Map::isWalkable(float x, float y) {
     return true;
 }
 
+bool Map::isWater(float x, float y) const {
+    int gx = static_cast<int>(x);
+    int gy = static_cast<int>(y);
+
+    // Sécurité limites
+    if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
+        return false;
+    }
+
+    // Si le type est 5, c'est de l'eau !
+    return (m_grid[gy][gx] == 2);
+}
+
 void Map::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
