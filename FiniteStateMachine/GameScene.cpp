@@ -73,7 +73,6 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     bool onLog = false;
     float currentLogSpeed = 0.f;
 
-    // 1. On met à jour et on teste les bûches
     for (auto& l : m_logs) {
         l.update(dt);
         if (m_player.getGridBounds().findIntersection(l.getGridBounds())) {
@@ -82,16 +81,29 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         }
     }
 
-    // 2. Gestion de l'eau
     if (m_map.isWater(pPos.x, pPos.y)) {
         if (onLog) {
-            // Le courant emporte le joueur (mouvement horizontal)
             m_player.setGridPos({ pPos.x + currentLogSpeed * dt, pPos.y });
         }
         else {
-            std::cout << "PLOUF !" << std::endl;
-            m_player.spawn({ 15.f, 30.f }); // Position de départ
+            m_player.spawn({ 0.f, 30.f });
             return;
+        }
+    }
+    else {
+        float targetX = std::round(pPos.x);
+
+        if (std::abs(pPos.x - targetX) > 0.01f) {
+            if (m_map.isWalkable(targetX, pPos.y)) {
+                m_player.setGridPos({ targetX, pPos.y });
+            }
+            else {
+                float alternativeX = (targetX > pPos.x) ? std::floor(pPos.x) : std::ceil(pPos.x);
+
+                if (m_map.isWalkable(alternativeX, pPos.y)) {
+                    m_player.setGridPos({ alternativeX, pPos.y });
+                }
+            }
         }
     }
 
