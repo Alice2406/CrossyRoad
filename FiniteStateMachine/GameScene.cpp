@@ -30,7 +30,54 @@ GameScene::GameScene()
         m_lineSpeeds[y] = randomSpeed * dir;
     }
 
-    m_player.spawn({ 10.f, 36.f });
+    m_player.spawn({ 25.f, 36.f });
+    int playerY = 30;
+
+    for (int y = playerY - 40; y <= playerY + 20; ++y) {
+        char type = m_map.getTileType(0, y);
+
+        if (type == 1 || type == 2 || type == 6) {
+            float speed = m_lineSpeeds[(y % 100 + 100) % 100];
+            if (type == 1) speed *= 1.8f;
+            if (type == 2) speed *= 0.8f;
+
+            int initialCount = 3 + (rand() % 3);
+
+            for (int i = 0; i < initialCount; ++i) {
+                float randomX = static_cast<float>(rand() % 35);
+                float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
+
+                if (type == 2)
+                    m_logs.push_back(Log(m_texLog, { randomX, targetY }, speed));
+                else if (type == 6)
+                    m_cars.push_back(Obstacle(m_texFleau, { randomX, targetY }, speed));
+                else if (type == 1)
+                    m_cars.push_back(Obstacle(m_texCar, { randomX, targetY }, speed));
+            }
+        }
+    }
+
+    float width = 1800.f;
+    float height = 900.f;
+
+    // On s'assure que le VertexArray a la bonne taille
+    m_vignette.setPrimitiveType(sf::PrimitiveType::TriangleFan);
+    m_vignette.resize(362);
+
+    // Centre de l'écran (Transparent)
+    m_vignette[0].position = { width / 2.f, height / 2.f };
+    m_vignette[0].color = sf::Color(0, 0, 0, 0);
+
+    for (int i = 1; i <= 361; ++i) {
+        float angle = i * 3.14159f / 180.f;
+        // On multiplie par 1.2 pour que le noir dépasse bien de l'écran
+        m_vignette[i].position = {
+            width / 2.f + cos(angle) * width * 0.9f,
+            height / 2.f + sin(angle) * height * 0.9f
+        };
+        // Alpha à 255 = Noir total sur les bords
+        m_vignette[i].color = sf::Color(0, 0, 0, 255);
+    }
 }
 
 void GameScene::handleInput(sf::RenderWindow& window) {
@@ -43,46 +90,43 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_spawnTimer += dt;
 
-    if (m_spawnTimer >= 0.4f) {
-        for (int y = 0; y < 50; ++y) {
+    if (m_spawnTimer >= 0.3f) {
+        int playerLine = (int)m_player.getGridPos().y;
+
+        for (int y = playerLine - 40; y < playerLine + 10; ++y) {
+
             char type = m_map.getTileType(0, y);
+
             if (type == 1 || type == 2 || type == 6) {
 
-                float speed = m_lineSpeeds[y];
+                int speedIdx = (y % 100 + 100) % 100;
+                float speed = m_lineSpeeds[speedIdx];
 
                 if (type == 1) speed *= 1.8f;
                 if (type == 2) speed *= 0.8f;
-                float startX = (speed > 0) ? -5.f : 45.f;
+
+                float startX = (speed > 0) ? -5.f : 30.f;
                 float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
 
                 bool spaceIsFree = true;
                 float minDistance = (type == 2) ? 3.5f : 8.f;
 
                 for (auto& c : m_cars) {
-                    if (std::abs(c.getGridBounds().position.x - startX) < minDistance &&
-                        std::abs(c.getGridBounds().position.y - targetY) < 0.1f) {
+                    if (std::abs(c.getGridBounds().position.y - targetY) < 0.1f && std::abs(c.getGridBounds().position.x - startX) < minDistance) {
                         spaceIsFree = false; break;
                     }
                 }
                 for (auto& l : m_logs) {
-                    if (std::abs(l.getGridBounds().position.x - startX) < minDistance &&
-                        std::abs(l.getGridBounds().position.y - targetY) < 0.1f) {
+                    if (std::abs(l.getGridPos().y - targetY) < 0.1f && std::abs(l.getGridPos().x - startX) < minDistance) {
                         spaceIsFree = false; break;
                     }
                 }
 
                 if (spaceIsFree) {
                     int chance = rand() % 100;
-
-                    if (type == 2 && chance > 40) {
-                        m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
-                    }
-                    else if (type == 6 && chance > 80) {
-                        m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
-                    }
-                    else if (type == 1 && chance > 85) {
-                        m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
-                    }
+                    if (type == 2 && chance > 40) m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
+                    else if (type == 6 && chance > 80) m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
+                    else if (type == 1 && chance > 85) m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
                 }
             }
         }
@@ -143,13 +187,12 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         }
     }
 
-    m_camera.update(dt, m_player.getPosition());
+    m_camera.update(dt, m_player.getGridPos());
+    sf::Vector2f playerIso = gridToIso(m_player.getGridPos());
     float limitY = m_camera.getScreenBottom();
-    sf::Vector2f playerIsoPos = m_player.getPosition();
 
-    if (playerIsoPos.y > limitY + 50.f)
+    if (playerIso.y > limitY)
     {
-        std::cout << "GAME OVER : Le joueur est reste a la traine !" << std::endl;
         isGameOver = true;
         return;
     }
@@ -163,7 +206,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 void GameScene::draw(sf::RenderWindow& window) {
     m_camera.apply(window); 
 
-    m_map.draw(window); 
+    m_map.draw(window, m_player.getGridPos());
 
     for (auto& log : m_logs) {
         log.draw(window, *this);
@@ -176,6 +219,7 @@ void GameScene::draw(sf::RenderWindow& window) {
     m_player.draw(window);
 
     window.setView(window.getDefaultView());
+    window.draw(m_vignette);
     window.draw(m_scoreText);
 }
 

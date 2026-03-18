@@ -20,11 +20,36 @@ Map::Map() : m_tileSprite(m_texGrass) {
     m_tileSprite.setOrigin({ 32.f, 32.f });
 }
 
-bool Map::isWalkable(float x, float y) {
-    int gx = static_cast<int>(x);
-    int gy = static_cast<int>(y);
+bool Map::isWater(float x, float y) const {
+    if (m_grid.empty()) return false;
 
-    if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
+    int gy = (static_cast<int>(std::floor(y)) % (int)m_grid.size() + (int)m_grid.size()) % (int)m_grid.size();
+    int gx = static_cast<int>(std::floor(x));
+
+    if (gx < 0 || gx >= (int)m_grid[gy].size()) {
+        return false;
+    }
+
+    return (m_grid[gy][gx] == 2);
+}
+
+char Map::getTileType(int x, int y) const {
+    if (m_grid.empty()) return ' ';
+    int gridY = (y % (int)m_grid.size() + (int)m_grid.size()) % (int)m_grid.size();
+
+    if (x >= 0 && (size_t)x < m_grid[gridY].size()) {
+        return m_grid[gridY][x];
+    }
+    return ' ';
+}
+
+bool Map::isWalkable(float x, float y) {
+    if (m_grid.empty()) return false;
+
+    int gy = (static_cast<int>(std::floor(y)) % (int)m_grid.size() + (int)m_grid.size()) % (int)m_grid.size();
+    int gx = static_cast<int>(std::floor(x));
+
+    if (gx < 0 || gx >= (int)m_grid[gy].size()) {
         return false;
     }
 
@@ -35,26 +60,6 @@ bool Map::isWalkable(float x, float y) {
     }
 
     return true;
-}
-
-char Map::getTileType(int x, int y) const {
-    if (y >= 0 && (size_t)y < m_grid.size()) {
-        char c = m_grid[y][0];
-        // std::cout << "Ligne " << y << " lit le caractere : [" << c << "]" << std::endl;
-        return c;
-    }
-    return ' ';
-}
-
-bool Map::isWater(float x, float y) const {
-    int gx = static_cast<int>(x);
-    int gy = static_cast<int>(y);
-
-    if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
-        return false;
-    }
-
-    return (m_grid[gy][gx] == 2);
 }
 
 void Map::loadFromFile(const std::string& filename) {
@@ -83,19 +88,25 @@ void Map::loadFromFile(const std::string& filename) {
     std::cout << "Map chargee avec succes (" << m_grid.size() << " lignes)." << std::endl;
 }
 
-void Map::draw(sf::RenderWindow& window) {
+void Map::draw(sf::RenderWindow& window, sf::Vector2f playerGridPos) {
     if (m_grid.empty()) return;
 
     const float HALF_WIDTH = 32.f;
     const float HALF_HEIGHT = 24.f;
-
     const float OFFSET_X = 900.f;
     const float OFFSET_Y = 200.f;
 
-    for (int y = 0; y < (int)m_grid.size(); ++y) {
-        for (int x = 0; x < (int)m_grid[y].size(); ++x) {
+    int startY = (int)playerGridPos.y - 40;
+    int endY = (int)playerGridPos.y + 20;
 
-            int type = m_grid[y][x];
+    for (int y = startY; y <= endY; ++y) {
+        int gridY = (y % (int)m_grid.size() + (int)m_grid.size()) % (int)m_grid.size();
+
+        for (int x = 0; x < (int)m_grid[gridY].size(); ++x) {
+
+            int type = m_grid[gridY][x];
+            if (type > 48) type -= 48; 
+
             if (type == 0 || type == 3 || type == 4) m_tileSprite.setTexture(m_texGrass, true);
             else if (type == 1) m_tileSprite.setTexture(m_texRail, true);
             else if (type == 2) m_tileSprite.setTexture(m_texWater, true);
@@ -103,24 +114,22 @@ void Map::draw(sf::RenderWindow& window) {
 
             m_tileSprite.setOrigin({ 32.f, 32.f });
 
-            float isoX = (x - y) * HALF_WIDTH;
-            float isoY = (x + y) * HALF_HEIGHT;
+            float isoX = (x - (float)y) * HALF_WIDTH + OFFSET_X;
+            float isoY = (x + (float)y) * HALF_HEIGHT + OFFSET_Y;
 
-            m_tileSprite.setPosition({ isoX + OFFSET_X, isoY + OFFSET_Y });
+            m_tileSprite.setPosition({ isoX, isoY });
             window.draw(m_tileSprite);
+
             if (type == 3) {
-                int fixedRandom = (x + y * 31) % 3;
-
-                if (fixedRandom == 0)      m_tileSprite.setTexture(m_texTree, true);
+                int fixedRandom = std::abs(x + y * 31) % 3;
+                if (fixedRandom == 0) m_tileSprite.setTexture(m_texTree, true);
                 else if (fixedRandom == 1) m_tileSprite.setTexture(m_texTree2, true);
-                else                       m_tileSprite.setTexture(m_texTree3, true);
-
+                else m_tileSprite.setTexture(m_texTree3, true);
                 m_tileSprite.setOrigin({ 32.f, 64.f });
                 window.draw(m_tileSprite);
             }
             if (type == 4) {
                 m_tileSprite.setTexture(m_texgrave, true);
-
                 m_tileSprite.setOrigin({ 32.f, 48.f });
                 window.draw(m_tileSprite);
             }

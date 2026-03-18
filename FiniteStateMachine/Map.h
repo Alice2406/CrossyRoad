@@ -9,7 +9,7 @@ class Map {
 public:
     Map();
     void loadFromFile(const std::string& filename);
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, sf::Vector2f playerGridPos);
     bool isWalkable(float x, float y);
 	bool isWater(float x, float y) const;
     char getTileType(int x, int y) const;

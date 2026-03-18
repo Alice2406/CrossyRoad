@@ -19,7 +19,9 @@ public:
     void draw(sf::RenderWindow& window) override;
     sf::Vector2f gridToIso(sf::Vector2f gridPos);
     bool isGameOver = false;
+    int m_highScore = 0;
 private:
+    sf::VertexArray m_vignette{ sf::PrimitiveType::TriangleFan, 362 };
     Player m_player;
     std::vector<Obstacle> m_obstacles;
     Map m_map;
@@ -38,5 +40,4 @@ private:
 
     sf::Font m_font;
     sf::Text m_scoreText;
-    int m_highScore = 0;
 };

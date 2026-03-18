@@ -47,7 +47,8 @@ int main() {
                 currentScene = std::make_unique<PauseScene>(std::move(currentScene));
             }
             else if (game->isGameOver) {
-                currentScene = std::make_unique<GameOverScene>();
+                int finalScore = game->m_highScore;
+                currentScene = std::make_unique<GameOverScene>(finalScore);
             }
         }
         else if (PauseScene* pause = dynamic_cast<PauseScene*>(currentScene.get())) {

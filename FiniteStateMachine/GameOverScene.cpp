@@ -1,10 +1,12 @@
 #include "GameOverScene.h"
+#include "GameScene.h"
 #include <iostream>
 
-GameOverScene::GameOverScene()
+GameOverScene::GameOverScene(int score)
     : sprBg(texBg), sprTitle(texTitle),
     loadText(font, "LOAD GAME", 60),
-    quitText(font, "QUIT", 60)
+    quitText(font, "QUIT", 60),
+    scoreText(font, "", 80)
 {
     if (!texBg.loadFromFile("../Asset/brume.png")) std::cerr << "Erreur : brume.png" << std::endl;
     if (!texTitle.loadFromFile("../Asset/youaredead.png")) std::cerr << "Erreur : title.png" << std::endl;
@@ -27,15 +29,27 @@ GameOverScene::GameOverScene()
         t.setPosition({ 900.f - bounds.size.x / 2.f, yPos });
         };
 
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(60);
+    scoreText.setFillColor(sf::Color(80, 0, 0));
+    scoreText.setPosition({ 900.f, 300.f });
+    setFinalScore(score);
     setupText(loadText, "LOAD GAME", 500.f);
     setupText(quitText, "QUIT", 650.f);
+}
+
+void GameOverScene::setFinalScore(int score) {
+    finalScore = score;
+    scoreText.setString("SCORE: " + std::to_string(finalScore));
+
+    sf::FloatRect bounds = scoreText.getGlobalBounds();
+    scoreText.setPosition({ 900.f - bounds.size.x / 2.f, 320.f });
 }
 
 void GameOverScene::update(float dt, sf::RenderWindow& window) {
     totalTime += dt;
     float shake = std::sin(totalTime * 20.f) * 1.5f;
 
-    // Effet clignotement titre
     if (std::rand() % 100 > 95)
         sprTitle.setColor(sf::Color(40, 0, 0));
     else
@@ -45,9 +59,8 @@ void GameOverScene::update(float dt, sf::RenderWindow& window) {
 
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    // Définition des couleurs
     sf::Color bordeaux(80, 0, 0);
-    sf::Color lightGray(180, 180, 180); // On définit le gris ici
+    sf::Color lightGray(180, 180, 180); 
 
     auto handleHover = [&](sf::Text& t, bool& trigger) {
         if (t.getGlobalBounds().contains(mousePos)) {
@@ -57,15 +70,13 @@ void GameOverScene::update(float dt, sf::RenderWindow& window) {
             }
         }
         else {
-            t.setFillColor(lightGray); // C'est ici qu'on met le gris par défaut !
+            t.setFillColor(lightGray); 
         }
-        };
+    };
 
-    // Maintenant les appels fonctionnent car handleHover gère les deux états
     handleHover(loadText, shouldLoadGame);
     handleHover(quitText, shouldQuit);
 
-    // SUPPRIME LES LIGNES ICI qui forçaient loadText et quitText en gris !
 
     mouseWasPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 }
@@ -73,6 +84,7 @@ void GameOverScene::update(float dt, sf::RenderWindow& window) {
 void GameOverScene::draw(sf::RenderWindow& window) {
     window.draw(sprBg);
     window.draw(sprTitle);
+    window.draw(scoreText);
     window.draw(loadText);
     window.draw(quitText);
 }
