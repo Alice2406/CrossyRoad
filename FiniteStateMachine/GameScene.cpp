@@ -1,5 +1,8 @@
 #include "GameScene.h"
 #include "Obstacle.h"
+#include "Invisibility.h"
+#include "Invincibility.h"
+#include <memory> 
 #include <iostream>
 
 GameScene::GameScene()
@@ -77,8 +80,32 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
 
     m_player.update(dt, m_map);
-
     sf::Vector2f pPos = m_player.getGridPos();
+
+    int ix = static_cast<int>(std::round(pPos.x));
+    int iy = static_cast<int>(std::round(pPos.y));
+
+    auto& grid = m_map.getGrid();
+
+    if (iy >= 0 && iy < (int)grid.size() && ix >= 0 && ix < (int)grid[iy].size()) {
+        if (grid[iy][ix] == 5) {
+            grid[iy][ix] = 0;   
+
+           
+            std::unique_ptr<PowerUp> bonus;
+
+            if (rand() % 2 == 0) {
+                bonus = std::make_unique<Invisibility>();
+            }
+            else {
+                bonus = std::make_unique<Invincibility>();
+            }
+
+            bonus->applyEffect(m_player); 
+
+            std::cout << "Power-Up recolte !" << std::endl;
+        }
+    }
 
     bool onLog = false;
     float currentLogSpeed = 0.f;
@@ -121,6 +148,25 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         it->update(dt);
 
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
+
+           
+            if (m_player.isInvisible()) {
+             
+                ++it;
+                continue;
+            }
+
+            
+            m_player.loseLife(); 
+
+            if (m_player.getLives() > 0) {
+               
+                std::cout << "OUF ! Vie perdue mais encore en vie !" << std::endl;
+                it = m_cars.erase(it);
+                continue;
+            }
+
+          
             std::cout << "MORT !" << std::endl;
             isGameOver = true;
             return;
@@ -133,7 +179,6 @@ void GameScene::update(float dt, sf::RenderWindow& window)
             ++it;
         }
     }
-
     m_camera.update(dt, m_player.getPosition());
 
     int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
@@ -159,7 +204,7 @@ void GameScene::draw(sf::RenderWindow& window)
         debugShape.setPoint(3, gridToIso({ box.position.x, box.position.y + box.size.y }));
 
         debugShape.setFillColor(sf::Color(255, 0, 0, 100));
-        //window.draw(debugShape);
+        
     }
     for (auto& log : m_logs) {
         sf::Vector2f isoPos = gridToIso(log.getGridPos());
