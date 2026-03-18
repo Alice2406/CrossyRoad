@@ -96,7 +96,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
             m_player.setGridPos({ pPos.x + currentLogSpeed * dt, pPos.y });
         }
         else {
-            m_player.spawn({ 0.f, 30.f });
+            isGameOver = true;
             return;
         }
     }
@@ -122,7 +122,8 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
             std::cout << "MORT !" << std::endl;
-            m_player.spawn({ 0.f, 30.f });
+            isGameOver = true;
+            return;
         }
 
         if (it->getGridX() > 42.f) {
