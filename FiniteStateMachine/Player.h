@@ -15,12 +15,12 @@ public:
     sf::FloatRect getGridBounds() const;
     void setGridPos(sf::Vector2f newPos) { m_gridPos = newPos; }
 
-    void addLife() { if (m_lives < 2) m_lives++; } // Max 2 vies
+    void addLife() { if (m_lives < 2) m_lives++; } 
     void loseLife() { m_lives--; }
     int getLives() const { return m_lives; }
 
     void setInvisibility(float duration) { m_isInvisible = true; m_invisTimer = duration; }
-    bool isInvisible() const { return m_isInvisible; }
+
 
 
     void setGhostMode(float duration) {
@@ -28,8 +28,10 @@ public:
         m_ghostTimer = duration;
     }
 
-    // Cette fonction permettra de vérifier si on peut traverser les voitures
     bool isGhost() const { return m_isGhost; }
+    bool isInvincible() const { return m_isInvincible; }
+    bool isInvisible() const { return m_ghostTimer > 0.f; }
+
 
 private:
     int m_currentFrame = 0;
@@ -45,12 +47,16 @@ private:
     sf::Texture m_texture;
     sf::Sprite m_sprite;
 
-    int m_lives = 1;             // Le joueur commence avec 1 vie
-    bool m_isInvisible = false;  // État du bonus d'invisibilité
-    float m_invisTimer = 0.0f;   // Chrono pour l'invisibilité
+    int m_lives = 1;             
+    bool m_isInvisible = false;
+    float m_invisTimer = 0.0f;  
 
 
-    bool m_isGhost = false;      // Est-ce que le joueur est un fantôme ?
-    float m_ghostTimer = 0.0f;   // Combien de temps il reste ?
+    bool m_isGhost = false;      
+    float m_ghostTimer = 0.0f;  
+    bool m_isInvincible = false;
+
+    float m_invincibleTimer = 0.f;
+    float m_invisibleTimer = 0.f;
 };
 

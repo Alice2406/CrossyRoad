@@ -85,8 +85,10 @@ void GameScene::handleInput(sf::RenderWindow& window) {
     }
 }
 
+
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
+
     m_spawnTimer += dt;
 
     if (m_spawnTimer >= 0.3f) {
@@ -142,24 +144,24 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
     if (iy >= 0 && iy < (int)grid.size() && ix >= 0 && ix < (int)grid[iy].size()) {
         if (grid[iy][ix] == 5) {
-            grid[iy][ix] = 0;   
+            grid[iy][ix] = 0;
 
-           
             std::unique_ptr<PowerUp> bonus;
 
-            if (rand() % 2 == 0) {
-                bonus = std::make_unique<Invisibility>();
+        
+            if ((ix + iy) % 2 == 0) {
+                bonus = std::make_unique<Invincibility>(); 
             }
             else {
-                bonus = std::make_unique<Invincibility>();
+                bonus = std::make_unique<Invisibility>(); 
             }
 
-            bonus->applyEffect(m_player); 
-
+            bonus->applyEffect(m_player);
             std::cout << "Power-Up recolte !" << std::endl;
         }
     }
 
+   
     bool onLog = false;
     float currentLogSpeed = 0.f;
 
@@ -192,31 +194,23 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         float targetX = std::round(pPos.x);
         if (std::abs(pPos.x - targetX) > 0.01f) {
             if (m_map.isWalkable(targetX, pPos.y)) m_player.setGridPos({ targetX, pPos.y });
+
         }
     }
 
     for (auto it = m_cars.begin(); it != m_cars.end(); ) {
         it->update(dt);
-
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
             if (m_player.isInvisible()) {
-             
                 ++it;
                 continue;
             }
-
-            
-            m_player.loseLife(); 
-
+            m_player.loseLife();
             if (m_player.getLives() > 0) {
-               
-                std::cout << "OUF ! Vie perdue mais encore en vie !" << std::endl;
+                std::cout << "OUF ! Vie perdue !" << std::endl;
                 it = m_cars.erase(it);
                 continue;
             }
-
-          
-            std::cout << "MORT !" << std::endl;
             isGameOver = true;
             return;
         }
@@ -244,10 +238,39 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
 }
 
-void GameScene::draw(sf::RenderWindow& window) {
-    m_camera.apply(window); 
-
+void GameScene::draw(sf::RenderWindow& window)
+{
+    m_camera.apply(window);
     m_map.draw(window, m_player.getGridPos());
+
+  
+    auto& grid = m_map.getGrid();
+    sf::Sprite pUpSprite(m_texPowerUp); 
+  
+
+    for (int y = 0; y < (int)grid.size(); ++y) {
+        for (int x = 0; x < (int)grid[y].size(); ++x) {
+            if (grid[y][x] == 5) {
+               
+                if ((x + y) % 2 == 0) {
+                 
+                    pUpSprite.setColor(sf::Color(255, 255, 255, 255));
+                }
+                else {
+                   
+                    pUpSprite.setColor(sf::Color(255, 200, 200, 255)); 
+                }
+
+                pUpSprite.setPosition(gridToIso({ (float)x, (float)y }));
+                window.draw(pUpSprite);
+            }
+        }
+    }
+
+    for (auto& car : m_cars) {
+        car.draw(window);
+  
+    }
     for (auto& log : m_logs) {
         log.draw(window, *this);
     }
@@ -263,13 +286,18 @@ void GameScene::draw(sf::RenderWindow& window) {
     window.draw(m_scoreText);
 }
 
-sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) {
-    const float HALF_WIDTH = 32.f;
-    const float HALF_HEIGHT = 24.f;
-    const float OFFSET_X = 900.f;
-    const float OFFSET_Y = 200.f;
 
-    float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
-    float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
-    return sf::Vector2f({ isoX, isoY });
-}
+    sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) 
+    {
+        const float HALF_WIDTH = 32.f;
+        const float HALF_HEIGHT = 24.f;
+        const float OFFSET_X = 900.f; 
+        const float OFFSET_Y = 200.f;
+
+        float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
+        float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
+        return sf::Vector2f(isoX, isoY);
+    }
+
+
+
