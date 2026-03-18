@@ -37,4 +37,6 @@ private:
     sf::Font m_font;
     sf::Text m_scoreText;
     int m_highScore = 0;
+
+    sf::Texture m_texPowerUp;
 };

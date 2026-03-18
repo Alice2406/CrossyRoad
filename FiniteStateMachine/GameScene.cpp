@@ -50,17 +50,18 @@ void GameScene::handleInput(sf::RenderWindow& window) {
     }
 }
 
+
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
     m_logTimer += dt;
-    if (m_logTimer >= 2.f) { 
+    if (m_logTimer >= 2.f) {
         m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
         m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
         m_logTimer = 0.f;
     }
 
     for (auto it = m_logs.begin(); it != m_logs.end(); ) {
-        if (it->getGridPos().x > 50.f) { 
+        if (it->getGridPos().x > 50.f) {
             it = m_logs.erase(it);
         }
         else {
@@ -89,24 +90,24 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
     if (iy >= 0 && iy < (int)grid.size() && ix >= 0 && ix < (int)grid[iy].size()) {
         if (grid[iy][ix] == 5) {
-            grid[iy][ix] = 0;   
+            grid[iy][ix] = 0;
 
-           
             std::unique_ptr<PowerUp> bonus;
 
-            if (rand() % 2 == 0) {
-                bonus = std::make_unique<Invisibility>();
+        
+            if ((ix + iy) % 2 == 0) {
+                bonus = std::make_unique<Invincibility>(); 
             }
             else {
-                bonus = std::make_unique<Invincibility>();
+                bonus = std::make_unique<Invisibility>(); 
             }
 
-            bonus->applyEffect(m_player); 
-
+            bonus->applyEffect(m_player);
             std::cout << "Power-Up recolte !" << std::endl;
         }
     }
 
+   
     bool onLog = false;
     float currentLogSpeed = 0.f;
 
@@ -129,14 +130,12 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
     else {
         float targetX = std::round(pPos.x);
-
         if (std::abs(pPos.x - targetX) > 0.01f) {
             if (m_map.isWalkable(targetX, pPos.y)) {
                 m_player.setGridPos({ targetX, pPos.y });
             }
             else {
                 float alternativeX = (targetX > pPos.x) ? std::floor(pPos.x) : std::ceil(pPos.x);
-
                 if (m_map.isWalkable(alternativeX, pPos.y)) {
                     m_player.setGridPos({ alternativeX, pPos.y });
                 }
@@ -146,69 +145,60 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
     for (auto it = m_cars.begin(); it != m_cars.end();) {
         it->update(dt);
-
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
-
-           
             if (m_player.isInvisible()) {
-             
                 ++it;
                 continue;
             }
-
-            
-            m_player.loseLife(); 
-
+            m_player.loseLife();
             if (m_player.getLives() > 0) {
-               
-                std::cout << "OUF ! Vie perdue mais encore en vie !" << std::endl;
+                std::cout << "OUF ! Vie perdue !" << std::endl;
                 it = m_cars.erase(it);
                 continue;
             }
-
-          
-            std::cout << "MORT !" << std::endl;
             isGameOver = true;
             return;
         }
-
-        if (it->getGridX() > 42.f) {
-            it = m_cars.erase(it);
-        }
-        else {
-            ++it;
-        }
+        if (it->getGridX() > 42.f) it = m_cars.erase(it);
+        else ++it;
     }
     m_camera.update(dt, m_player.getPosition());
-
-    int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
-    if (calculatedScore > m_highScore) {
-        m_highScore = calculatedScore;
-        m_scoreText.setString(std::to_string(m_highScore));
-    }
 }
 
 void GameScene::draw(sf::RenderWindow& window)
 {
     m_camera.apply(window);
     m_map.draw(window);
+
+  
+    auto& grid = m_map.getGrid();
+    sf::Sprite pUpSprite(m_texPowerUp); 
+  
+
+    for (int y = 0; y < (int)grid.size(); ++y) {
+        for (int x = 0; x < (int)grid[y].size(); ++x) {
+            if (grid[y][x] == 5) {
+               
+                if ((x + y) % 2 == 0) {
+                 
+                    pUpSprite.setColor(sf::Color(255, 255, 255, 255));
+                }
+                else {
+                   
+                    pUpSprite.setColor(sf::Color(255, 200, 200, 255)); 
+                }
+
+                pUpSprite.setPosition(gridToIso({ (float)x, (float)y }));
+                window.draw(pUpSprite);
+            }
+        }
+    }
+
     for (auto& car : m_cars) {
         car.draw(window);
-
-        sf::FloatRect box = car.getGridBounds();
-        sf::ConvexShape debugShape(4);
-
-        debugShape.setPoint(0, gridToIso({ box.position.x, box.position.y }));
-        debugShape.setPoint(1, gridToIso({ box.position.x + box.size.x, box.position.y }));
-        debugShape.setPoint(2, gridToIso({ box.position.x + box.size.x, box.position.y + box.size.y }));
-        debugShape.setPoint(3, gridToIso({ box.position.x, box.position.y + box.size.y }));
-
-        debugShape.setFillColor(sf::Color(255, 0, 0, 100));
-        
+  
     }
     for (auto& log : m_logs) {
-        sf::Vector2f isoPos = gridToIso(log.getGridPos());
-
         log.draw(window, *this);
     }
     m_player.draw(window);
@@ -217,13 +207,18 @@ void GameScene::draw(sf::RenderWindow& window)
     window.draw(m_scoreText);
 }
 
-sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) {
-    const float HALF_WIDTH = 32.f;
-    const float HALF_HEIGHT = 24.f;
-    const float OFFSET_X = 900.f;
-    const float OFFSET_Y = 200.f;
 
-    float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
-    float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
-    return sf::Vector2f({ isoX, isoY });
-}
+    sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) 
+    {
+        const float HALF_WIDTH = 32.f;
+        const float HALF_HEIGHT = 24.f;
+        const float OFFSET_X = 900.f; 
+        const float OFFSET_Y = 200.f;
+
+        float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
+        float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
+        return sf::Vector2f(isoX, isoY);
+    }
+
+
+
