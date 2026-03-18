@@ -139,12 +139,15 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="Invincibility.cpp" />
+    <ClCompile Include="Invisibility.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="PauseScene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SkinScene.cpp" />
   </ItemGroup>
@@ -152,6 +155,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Invincibility.h" />
+    <ClInclude Include="Invisibility.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Obstacle.h" />
@@ -161,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MenuScene.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SkinScene.h" />

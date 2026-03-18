@@ -12,7 +12,8 @@ Map::Map() : m_tileSprite(m_texGrass) {
         !m_texTree3.loadFromFile("../Asset/arbre3.png") ||
         !m_texgrave.loadFromFile("../Asset/tombe22.png") ||
         !m_texRoad.loadFromFile("../Asset/pierre.png") ||
-        !m_texWater.loadFromFile("../Asset/water2.png"))
+        !m_texWater.loadFromFile("../Asset/water2.png") ||
+        !m_texPowerUp.loadFromFile("../Asset/PowerUp.png"))
     {
         std::cerr << "Erreur : Impossible de charger une ou plusieurs textures !" << std::endl;
     }
@@ -62,7 +63,21 @@ bool Map::isWalkable(float x, float y) {
     return true;
 }
 
-void Map::loadFromFile(const std::string& filename) {
+bool Map::isWater(float x, float y) const {
+    int gx = static_cast<int>(x);
+    int gy = static_cast<int>(y);
+
+    // Sécurité limites
+    if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
+        return false;
+    }
+
+    // Si le type est 5, c'est de l'eau !
+    return (m_grid[gy][gx] == 2);
+}
+
+void Map::loadFromFile(const std::string& filename)
+{
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Erreur : Impossible d'ouvrir " << filename << std::endl;
@@ -131,6 +146,13 @@ void Map::draw(sf::RenderWindow& window, sf::Vector2f playerGridPos) {
             if (type == 4) {
                 m_tileSprite.setTexture(m_texgrave, true);
                 m_tileSprite.setOrigin({ 32.f, 48.f });
+                window.draw(m_tileSprite);
+            }
+
+            if (type == 5) { // PowerUp
+                m_tileSprite.setTexture(m_texPowerUp, true);
+                m_tileSprite.setOrigin({ 32.f, 48.f });
+                // Pas besoin de changer setPosition car isoX/isoY sont déjà bons
                 window.draw(m_tileSprite);
             }
         }

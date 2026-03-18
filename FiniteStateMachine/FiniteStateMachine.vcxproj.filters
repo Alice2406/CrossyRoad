@@ -13,6 +13,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
+    <ClCompile Include="Invisibility.cpp" />
+    <ClCompile Include="Invincibility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameScene.h" />
@@ -27,6 +30,9 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="PowerUp.h" />
+    <ClInclude Include="Invisibility.h" />
+    <ClInclude Include="Invincibility.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FiniteStateMachine.rc" />
