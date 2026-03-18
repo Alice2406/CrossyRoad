@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Log.h"
 #include <vector>
+#include <map>
 
 class GameScene : public Scene
 {
@@ -26,6 +27,7 @@ private:
     sf::Texture m_texCar; 
     sf::Texture m_texFleau;
     std::vector<Obstacle> m_cars; 
+    std::map<int, float> m_lineSpeeds;
     float m_spawnTimer = 0.f;
 	float m_logTimer = 0.f;
     std::vector<Log> m_logs;

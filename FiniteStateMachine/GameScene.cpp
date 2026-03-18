@@ -1,36 +1,20 @@
 #include "GameScene.h"
 #include "Obstacle.h"
 #include <iostream>
+#include <cmath>
 
 GameScene::GameScene()
-    : m_camera({ 510.f, 2000.f}, {1800.f, 900.f}),
+    : m_camera({ 510.f, 2000.f }, { 1800.f, 900.f }),
     m_scoreText(m_font)
 {
-    if (!m_texCar.loadFromFile("../Asset/scie.png")) {
-		std::cerr << "Erreur : scie.png introuvable !" << std::endl;
-    }
-    if (!m_texLog.loadFromFile("../Asset/cercueil.png")) {
-        std::cerr << "Erreur : cercueil.png introuvable !" << std::endl;
-    }
-    if (!m_texFleau.loadFromFile("../Asset/fleau.png")) {
-        std::cerr << "Erreur : fleau.png introuvable !" << std::endl;
-    }
+    if (!m_texCar.loadFromFile("../Asset/scie.png")) std::cerr << "Erreur : scie.png" << std::endl;
+    if (!m_texLog.loadFromFile("../Asset/cercueil.png")) std::cerr << "Erreur : cercueil.png" << std::endl;
+    if (!m_texFleau.loadFromFile("../Asset/fleau.png")) std::cerr << "Erreur : fleau.png" << std::endl;
+
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
-    m_player.spawn({ 10.f, 30.f });
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 1.7f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 12.7f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
-    m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 3.0f));
-
-    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 26.7f), 4.0f));
-    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
-    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
-
-    m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
-    m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
     if (!m_font.openFromFile("../Asset/Thunder.ttf")) {
-		std::cerr << "Erreur : impossible de charger la police !" << std::endl;
+        std::cerr << "Erreur : font introuvable !" << std::endl;
     }
 
     m_scoreText.setCharacterSize(50);
@@ -39,6 +23,14 @@ GameScene::GameScene()
     m_scoreText.setOutlineThickness(2.f);
     m_scoreText.setPosition({ 20.f, 20.f });
     m_scoreText.setString("0");
+
+    for (int y = 0; y < 100; ++y) {
+        float dir = (y % 2 == 0) ? 1.f : -1.f; 
+        float randomSpeed = (2.5f + static_cast<float>(rand() % 20) / 10.f);
+        m_lineSpeeds[y] = randomSpeed * dir;
+    }
+
+    m_player.spawn({ 10.f, 36.f });
 }
 
 void GameScene::handleInput(sf::RenderWindow& window) {
@@ -49,45 +41,73 @@ void GameScene::handleInput(sf::RenderWindow& window) {
 
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
-    m_logTimer += dt;
-    if (m_logTimer >= 2.f) { 
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
-        m_logTimer = 0.f;
-    }
-
-    for (auto it = m_logs.begin(); it != m_logs.end(); ) {
-        if (it->getGridPos().x > 50.f) { 
-            it = m_logs.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
     m_spawnTimer += dt;
-    if (m_spawnTimer >= 3.0f) {
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 1.7f), 4.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 12.7f), 4.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
-        m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 4.0f));
-        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 26.7f), 4.0f));
-        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
-        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
+
+    if (m_spawnTimer >= 0.4f) {
+        for (int y = 0; y < 50; ++y) {
+            char type = m_map.getTileType(0, y);
+            if (type == 1 || type == 2 || type == 6) {
+
+                float speed = m_lineSpeeds[y];
+
+                if (type == 1) speed *= 1.8f;
+                if (type == 2) speed *= 0.8f;
+                float startX = (speed > 0) ? -5.f : 45.f;
+                float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
+
+                bool spaceIsFree = true;
+                float minDistance = (type == 2) ? 3.5f : 8.f;
+
+                for (auto& c : m_cars) {
+                    if (std::abs(c.getGridBounds().position.x - startX) < minDistance &&
+                        std::abs(c.getGridBounds().position.y - targetY) < 0.1f) {
+                        spaceIsFree = false; break;
+                    }
+                }
+                for (auto& l : m_logs) {
+                    if (std::abs(l.getGridBounds().position.x - startX) < minDistance &&
+                        std::abs(l.getGridBounds().position.y - targetY) < 0.1f) {
+                        spaceIsFree = false; break;
+                    }
+                }
+
+                if (spaceIsFree) {
+                    int chance = rand() % 100;
+
+                    if (type == 2 && chance > 40) {
+                        m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
+                    }
+                    else if (type == 6 && chance > 80) {
+                        m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
+                    }
+                    else if (type == 1 && chance > 85) {
+                        m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
+                    }
+                }
+            }
+        }
         m_spawnTimer = 0.f;
     }
 
     m_player.update(dt, m_map);
-
     sf::Vector2f pPos = m_player.getGridPos();
 
     bool onLog = false;
     float currentLogSpeed = 0.f;
 
-    for (auto& l : m_logs) {
-        l.update(dt);
-        if (m_player.getGridBounds().findIntersection(l.getGridBounds())) {
+    for (auto it = m_logs.begin(); it != m_logs.end(); ) {
+        it->update(dt);
+
+        if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
             onLog = true;
-            currentLogSpeed = l.getSpeed();
+            currentLogSpeed = it->getSpeed();
+        }
+
+        if (it->getGridPos().x > 60.f || it->getGridPos().x < -20.f) {
+            it = m_logs.erase(it);
+        }
+        else {
+            ++it;
         }
     }
 
@@ -102,31 +122,20 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
     else {
         float targetX = std::round(pPos.x);
-
         if (std::abs(pPos.x - targetX) > 0.01f) {
-            if (m_map.isWalkable(targetX, pPos.y)) {
-                m_player.setGridPos({ targetX, pPos.y });
-            }
-            else {
-                float alternativeX = (targetX > pPos.x) ? std::floor(pPos.x) : std::ceil(pPos.x);
-
-                if (m_map.isWalkable(alternativeX, pPos.y)) {
-                    m_player.setGridPos({ alternativeX, pPos.y });
-                }
-            }
+            if (m_map.isWalkable(targetX, pPos.y)) m_player.setGridPos({ targetX, pPos.y });
         }
     }
 
-    for (auto it = m_cars.begin(); it != m_cars.end();) {
+    for (auto it = m_cars.begin(); it != m_cars.end(); ) {
         it->update(dt);
 
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
-            std::cout << "MORT !" << std::endl;
             isGameOver = true;
             return;
         }
 
-        if (it->getGridX() > 42.f) {
+        if (it->getGridX() > 60.f || it->getGridX() < -20.f) {
             it = m_cars.erase(it);
         }
         else {
@@ -135,7 +144,15 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
 
     m_camera.update(dt, m_player.getPosition());
+    float limitY = m_camera.getScreenBottom();
+    sf::Vector2f playerIsoPos = m_player.getPosition();
 
+    if (playerIsoPos.y > limitY + 50.f)
+    {
+        std::cout << "GAME OVER : Le joueur est reste a la traine !" << std::endl;
+        isGameOver = true;
+        return;
+    }
     int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
     if (calculatedScore > m_highScore) {
         m_highScore = calculatedScore;
@@ -143,29 +160,19 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     }
 }
 
-void GameScene::draw(sf::RenderWindow& window)
-{
-    m_camera.apply(window);
-    m_map.draw(window);
-    for (auto& car : m_cars) {
-        car.draw(window);
+void GameScene::draw(sf::RenderWindow& window) {
+    m_camera.apply(window); 
 
-        sf::FloatRect box = car.getGridBounds();
-        sf::ConvexShape debugShape(4);
+    m_map.draw(window); 
 
-        debugShape.setPoint(0, gridToIso({ box.position.x, box.position.y }));
-        debugShape.setPoint(1, gridToIso({ box.position.x + box.size.x, box.position.y }));
-        debugShape.setPoint(2, gridToIso({ box.position.x + box.size.x, box.position.y + box.size.y }));
-        debugShape.setPoint(3, gridToIso({ box.position.x, box.position.y + box.size.y }));
-
-        debugShape.setFillColor(sf::Color(255, 0, 0, 100));
-        //window.draw(debugShape);
-    }
     for (auto& log : m_logs) {
-        sf::Vector2f isoPos = gridToIso(log.getGridPos());
-
         log.draw(window, *this);
     }
+
+    for (auto& car : m_cars) {
+        car.draw(window);
+    }
+
     m_player.draw(window);
 
     window.setView(window.getDefaultView());

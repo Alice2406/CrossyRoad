@@ -6,11 +6,12 @@
 Map::Map() : m_tileSprite(m_texGrass) {
 
     if (!m_texGrass.loadFromFile("../Asset/grass2.png") ||
-        !m_texRoad.loadFromFile("../Asset/rails.png") ||
+        !m_texRail.loadFromFile("../Asset/rails.png") ||
         !m_texTree.loadFromFile("../Asset/arbre.png") ||
         !m_texTree2.loadFromFile("../Asset/arbre2.png") ||
         !m_texTree3.loadFromFile("../Asset/arbre3.png") ||
         !m_texgrave.loadFromFile("../Asset/tombe22.png") ||
+        !m_texRoad.loadFromFile("../Asset/pierre.png") ||
         !m_texWater.loadFromFile("../Asset/water2.png"))
     {
         std::cerr << "Erreur : Impossible de charger une ou plusieurs textures !" << std::endl;
@@ -36,16 +37,23 @@ bool Map::isWalkable(float x, float y) {
     return true;
 }
 
+char Map::getTileType(int x, int y) const {
+    if (y >= 0 && (size_t)y < m_grid.size()) {
+        char c = m_grid[y][0];
+        // std::cout << "Ligne " << y << " lit le caractere : [" << c << "]" << std::endl;
+        return c;
+    }
+    return ' ';
+}
+
 bool Map::isWater(float x, float y) const {
     int gx = static_cast<int>(x);
     int gy = static_cast<int>(y);
 
-    // Sécurité limites
     if (gy < 0 || gy >= (int)m_grid.size() || gx < 0 || gx >= (int)m_grid[0].size()) {
         return false;
     }
 
-    // Si le type est 5, c'est de l'eau !
     return (m_grid[gy][gx] == 2);
 }
 
@@ -89,8 +97,9 @@ void Map::draw(sf::RenderWindow& window) {
 
             int type = m_grid[y][x];
             if (type == 0 || type == 3 || type == 4) m_tileSprite.setTexture(m_texGrass, true);
-            else if (type == 1) m_tileSprite.setTexture(m_texRoad, true);
+            else if (type == 1) m_tileSprite.setTexture(m_texRail, true);
             else if (type == 2) m_tileSprite.setTexture(m_texWater, true);
+            else if (type == 6) m_tileSprite.setTexture(m_texRoad, true);
 
             m_tileSprite.setOrigin({ 32.f, 32.f });
 

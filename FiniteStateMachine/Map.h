@@ -12,11 +12,12 @@ public:
     void draw(sf::RenderWindow& window);
     bool isWalkable(float x, float y);
 	bool isWater(float x, float y) const;
+    char getTileType(int x, int y) const;
     std::vector<std::vector<int>>& getGrid() { return m_grid; }
 
 private:
     std::vector<std::vector<int>> m_grid;
-    sf::Texture m_texGrass, m_texRoad, m_texWater, m_texTree, m_texTree2, m_texTree3, m_texgrave;
+    sf::Texture m_texGrass, m_texRoad, m_texWater, m_texTree, m_texTree2, m_texTree3, m_texgrave, m_texRail;
     sf::Sprite m_tileSprite;
 
 };
