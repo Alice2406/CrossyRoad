@@ -3,13 +3,24 @@
 #include <cmath>
 
 MenuScene::MenuScene()
-    : font(),
-    title(font, "CROSSY DEATH"), 
+	: font(),
+    backgroundTex(),
+    backgroundSprite(backgroundTex),
+    title(font, "THE ONLY ROAD"), 
     playText(font, "START"),
     skinText(font, "SKINS"),
     quitText(font, "QUIT")
 {
-    if (!font.openFromFile("Assets/Arial.ttf")) {
+
+    if (!backgroundTex.loadFromFile("../Asset/brume.png")) {
+        std::cerr << "Erreur : impossible de charger le background !" << std::endl;
+    }
+    backgroundSprite.setTexture(backgroundTex, true);
+    sf::Vector2u textureSize = backgroundTex.getSize();
+    float scaleX = 1800.f / textureSize.x; 
+    float scaleY = 900.f / textureSize.y;
+    backgroundSprite.setScale({ scaleX, scaleY });
+    if (!font.openFromFile("../Asset/Thunder.ttf")) {
         std::cerr << "Erreur : impossible de charger la police !" << std::endl;
     }
 
@@ -20,7 +31,7 @@ MenuScene::MenuScene()
    
     auto setupBtn = [&](sf::RectangleShape& shape, sf::Text& text, float yPos) {
         shape.setSize({ 300.f, 60.f });
-        shape.setFillColor(sf::Color(20, 20, 20)); 
+        shape.setFillColor(sf::Color(20, 20, 20, 50));
         shape.setOutlineThickness(2.f);
         shape.setOutlineColor(sf::Color(80, 0, 0)); 
         shape.setPosition({ 900.f - 150.f, yPos });
@@ -83,6 +94,7 @@ void MenuScene::update(float dt, sf::RenderWindow& window) {
 }
 
 void MenuScene::draw(sf::RenderWindow& window) {
+    window.draw(backgroundSprite);
     window.draw(title);
     window.draw(playBtn);
     window.draw(playText);

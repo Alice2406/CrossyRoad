@@ -7,7 +7,7 @@ PauseScene::PauseScene(std::unique_ptr<Scene> backScene)
     pauseText(font),
     timerText(font)
 {
-    font.openFromFile("Assets/Arial.ttf");
+    font.openFromFile("../Asset/Thunder.ttf");
 
     pauseText.setString("TU Y ES PRESQUE...");
     pauseText.setCharacterSize(80);

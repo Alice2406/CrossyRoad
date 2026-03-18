@@ -23,22 +23,22 @@ GameScene::GameScene()
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
     m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 3.0f));
 
-    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 25.7f), 3.0f));
+    m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 26.7f), 4.0f));
     m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
     m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
 
     m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
     m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
-    if (!m_font.openFromFile("Assets/Arial.ttf")) {
-        m_font.openFromFile("../Asset/Arial.ttf");
+    if (!m_font.openFromFile("../Asset/Thunder.ttf")) {
+		std::cerr << "Erreur : impossible de charger la police !" << std::endl;
     }
 
     m_scoreText.setCharacterSize(50);
-    m_scoreText.setFillColor(sf::Color::Blue);
-    m_scoreText.setOutlineColor(sf::Color::Black);
+    m_scoreText.setFillColor(sf::Color::Red);
+    m_scoreText.setOutlineColor(sf::Color::White);
     m_scoreText.setOutlineThickness(2.f);
     m_scoreText.setPosition({ 20.f, 20.f });
-    m_scoreText.setString("Score: 0");
+    m_scoreText.setString("0");
 }
 
 void GameScene::handleInput(sf::RenderWindow& window) {
@@ -70,7 +70,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 12.7f), 4.0f));
         m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 18.7f), 3.0f));
         m_cars.push_back(Obstacle(m_texCar, sf::Vector2f(-2.f, 22.7f), 4.0f));
-        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 25.7f), 3.0f));
+        m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 26.7f), 4.0f));
         m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 3.7f), 3.0f));
         m_cars.push_back(Obstacle(m_texFleau, sf::Vector2f(-2.f, 15.7f), 3.0f));
         m_spawnTimer = 0.f;
@@ -138,7 +138,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
     if (calculatedScore > m_highScore) {
         m_highScore = calculatedScore;
-        m_scoreText.setString("Score: " + std::to_string(m_highScore));
+        m_scoreText.setString(std::to_string(m_highScore));
     }
 }
 

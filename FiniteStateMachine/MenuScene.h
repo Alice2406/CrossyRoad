@@ -19,6 +19,8 @@ private:
     sf::Font font;
     sf::Text title;
 
+    sf::Texture backgroundTex;
+    sf::Sprite backgroundSprite;
  
     sf::RectangleShape playBtn;
     sf::Text playText;
