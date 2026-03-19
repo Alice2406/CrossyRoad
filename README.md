@@ -33,7 +33,7 @@ Le jeu utilise une projection isométrique personnalisée.
 ### Systèmes implémentés
 * **Génération Procédurale :** Les obstacles apparaissent dynamiquement autour du joueur.
 * **Gestionnaire de Scènes :** Transition fluide entre le menu, la sélection de personnages, le jeu et l'écran de fin.
-* **Shaders:** * Système de **Vignette** (TriangleFan) pour créer une ambiance de brouillard sombre qui suit le joueur.
+* **Shaders:** Système de **Vignette** (TriangleFan) pour créer une ambiance de brouillard sombre qui suit le joueur.
 * **Physique & Collisions :** Gestion des collisions par AABB adaptée à l'isométrie.
 
 ##  Commandes
