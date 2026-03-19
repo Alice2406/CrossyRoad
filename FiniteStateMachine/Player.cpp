@@ -42,6 +42,7 @@ void Player::update(float dt, Map& map)
     if (m_ghostTimer > 0.f) {
         m_ghostTimer -= dt;
     }
+
     bool anyKey = false;
     sf::Vector2f moveVec(0.f, 0.f);
     sf::Vector2f gridDir(0.f, 0.f);
@@ -93,22 +94,17 @@ void Player::update(float dt, Map& map)
 
     if (!anyKey) m_moveLocked = false;
 }
-void Player::draw(sf::RenderWindow& window) {
+void Player::draw(sf::RenderWindow& window)
+{
     m_sprite.setPosition(getIsoPosition());
 
     if (this->isInvisible()) {
-       
-        m_sprite.setColor(sf::Color(100, 150, 255, 150));
-
-       
-    }
-    else if (this->isInvincible()) {
      
-        m_sprite.setColor(sf::Color(255, 200, 200, 100));
+        m_sprite.setColor(sf::Color(100, 150, 255, 150));
     }
     else {
-        // --- ÉTAT NORMAL ---
-        m_sprite.setColor(sf::Color::White); // Couleur d'origine
+    
+        m_sprite.setColor(sf::Color::White);
     }
 
     window.draw(m_sprite);

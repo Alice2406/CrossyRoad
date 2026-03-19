@@ -32,6 +32,9 @@ public:
     bool isInvincible() const { return m_isInvincible; }
     bool isInvisible() const { return m_ghostTimer > 0.f; }
 
+    float m_flashTimer = 0.f; 
+    void setInvincibleTimer(float duration) { m_invincibleTimer = duration; }
+
 
 private:
     int m_currentFrame = 0;
@@ -58,5 +61,6 @@ private:
 
     float m_invincibleTimer = 0.f;
     float m_invisibleTimer = 0.f;
+
 };
 
