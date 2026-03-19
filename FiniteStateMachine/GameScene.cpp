@@ -6,8 +6,9 @@
 #include <iostream>
 
 GameScene::GameScene()
-    : m_camera({ 510.f, 2000.f}, {1800.f, 900.f}),
-    m_scoreText(m_font)
+    : m_camera({ 510.f, 2000.f }, { 1800.f, 900.f }),
+    m_scoreText(m_font),
+    m_spawnInterval(3.0f) 
 {
     if (!m_texCar.loadFromFile("../Asset/scie.png")) {
 		std::cerr << "Erreur : scie.png introuvable !" << std::endl;
@@ -170,43 +171,29 @@ void GameScene::draw(sf::RenderWindow& window)
     m_camera.apply(window);
     m_map.draw(window);
 
-  
     auto& grid = m_map.getGrid();
-    sf::Sprite pUpSprite(m_texPowerUp); 
-  
+    sf::Sprite pUpSprite(m_texPowerUp);
+
+    pUpSprite.setColor(sf::Color::White);
 
     for (int y = 0; y < (int)grid.size(); ++y) {
         for (int x = 0; x < (int)grid[y].size(); ++x) {
             if (grid[y][x] == 5) {
-               
-                if ((x + y) % 2 == 0) {
-                 
-                    pUpSprite.setColor(sf::Color(255, 255, 255, 255));
-                }
-                else {
-                   
-                    pUpSprite.setColor(sf::Color(255, 200, 200, 255)); 
-                }
-
+             
                 pUpSprite.setPosition(gridToIso({ (float)x, (float)y }));
                 window.draw(pUpSprite);
             }
         }
     }
 
-    for (auto& car : m_cars) {
-        car.draw(window);
-  
-    }
-    for (auto& log : m_logs) {
-        log.draw(window, *this);
-    }
+    for (auto& car : m_cars) { car.draw(window); }
+    for (auto& log : m_logs) { log.draw(window, *this); }
+
     m_player.draw(window);
 
     window.setView(window.getDefaultView());
     window.draw(m_scoreText);
 }
-
 
     sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) 
     {

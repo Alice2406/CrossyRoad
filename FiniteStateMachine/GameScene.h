@@ -32,7 +32,7 @@ private:
     sf::Texture m_texLog;
     Camera m_camera;
     sf::Clock m_spawnClock;
-    float m_spawnInterval;
+    float m_spawnInterval = 3.0f;
 
     sf::Font m_font;
     sf::Text m_scoreText;
