@@ -38,7 +38,7 @@ GameScene::GameScene()
 
         if (type == 1 || type == 2 || type == 6) {
             float speed = m_lineSpeeds[(y % 100 + 100) % 100];
-            if (type == 1) speed *= 1.8f;
+            if (type == 1) speed *= 2.5f;
             if (type == 2) speed *= 0.8f;
 
             int initialCount = 3 + (rand() % 3);
@@ -60,22 +60,18 @@ GameScene::GameScene()
     float width = 1800.f;
     float height = 900.f;
 
-    // On s'assure que le VertexArray a la bonne taille
     m_vignette.setPrimitiveType(sf::PrimitiveType::TriangleFan);
     m_vignette.resize(362);
 
-    // Centre de l'écran (Transparent)
     m_vignette[0].position = { width / 2.f, height / 2.f };
     m_vignette[0].color = sf::Color(0, 0, 0, 0);
 
     for (int i = 1; i <= 361; ++i) {
         float angle = i * 3.14159f / 180.f;
-        // On multiplie par 1.2 pour que le noir dépasse bien de l'écran
         m_vignette[i].position = {
             width / 2.f + cos(angle) * width * 0.9f,
             height / 2.f + sin(angle) * height * 0.9f
         };
-        // Alpha à 255 = Noir total sur les bords
         m_vignette[i].color = sf::Color(0, 0, 0, 255);
     }
 }
