@@ -42,6 +42,9 @@ void Player::update(float dt, Map& map)
     if (m_ghostTimer > 0.f) {
         m_ghostTimer -= dt;
     }
+    if (m_shakeTimer > 0.f) {
+        m_shakeTimer -= dt;
+    }
 
     bool anyKey = false;
     sf::Vector2f moveVec(0.f, 0.f);
@@ -96,15 +99,32 @@ void Player::update(float dt, Map& map)
 }
 void Player::draw(sf::RenderWindow& window)
 {
-    m_sprite.setPosition(getIsoPosition());
 
-    if (this->isInvisible()) {
-     
-        m_sprite.setColor(sf::Color(100, 150, 255, 150));
+    sf::Vector2f pos = getIsoPosition();
+
+ 
+    if (m_shakeTimer > 0.f) {
+    
+        float offsetX = static_cast<float>(std::rand() % 9 - 4);
+        float offsetY = static_cast<float>(std::rand() % 9 - 4);
+
+        m_sprite.setPosition({ pos.x + offsetX, pos.y + offsetY });
+
+      
+        m_sprite.setColor(sf::Color(255, 50, 50));
     }
     else {
-    
-        m_sprite.setColor(sf::Color::White);
+       
+        m_sprite.setPosition(pos); 
+
+        if (this->isInvisible()) {
+            
+            m_sprite.setColor(sf::Color(100, 150, 255, 150));
+        }
+        else {
+            
+            m_sprite.setColor(sf::Color::White);
+        }
     }
 
     window.draw(m_sprite);

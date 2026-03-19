@@ -281,17 +281,23 @@ void GameScene::update(float dt, sf::RenderWindow& window)
     for (auto it = m_cars.begin(); it != m_cars.end(); ) {
         it->update(dt);
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
-            if (m_player.isInvisible()) {
+          
+            if (m_player.isInvisible() || m_player.isShaking()) {
                 ++it;
                 continue;
             }
-            m_player.loseLife();
-            if (m_player.getLives() > 0) {
-                std::cout << "OUF ! Vie perdue !" << std::endl;
-                it = m_cars.erase(it);
+
+         
+            if (m_player.getLives() > 1) {
+                m_player.loseLife();       
+                m_player.startShake(0.5f); 
+
+                std::cout << "CHOC : Passage en force !" << std::endl;
+                ++it; 
                 continue;
             }
-            isGameOver = true;
+
+            
             std::cout << "MORT !" << std::endl;
             m_backgroundMusic.stop();
             m_deathSound.play();
