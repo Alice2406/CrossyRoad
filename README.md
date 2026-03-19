@@ -21,9 +21,9 @@ Dans **The Only Road**, l'environnement n'est pas un simple décor, c'est une me
 ##  Nouvelles Mécaniques : Les Bonus
 Pour compenser une difficulté accrue et ajouter une couche tactique, des bonus apparaissent aléatoirement sur la route :
 
-1. ** Invisibilité** : Rend le personnage immatériel, lui permettant de traverser les obstacles et les ennemis sans subir de dégâts pendant quelques secondes.
+1. **Invisibilité** : Rend le personnage immatériel, lui permettant de traverser les obstacles et les ennemis sans subir de dégâts pendant quelques secondes.
 
-2. ** Vie Supplémentaire** : Octroie une seconde chance en permettant de résister à une collision, quel que soit l'obstacle rencontré.
+2. **Vie Supplémentaire** : Octroie une seconde chance en permettant de résister à une collision, quel que soit l'obstacle rencontré.
 
 ## Spécifications Techniques
 
