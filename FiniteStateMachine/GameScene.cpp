@@ -91,7 +91,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
     m_spawnTimer += dt;
 
-    if (m_spawnTimer >= 0.3f) {
+    if (m_spawnTimer >= 0.2f) {
         int playerLine = (int)m_player.getGridPos().y;
 
         for (int y = playerLine - 40; y < playerLine + 10; ++y) {
@@ -104,13 +104,13 @@ void GameScene::update(float dt, sf::RenderWindow& window)
                 float speed = m_lineSpeeds[speedIdx];
 
                 if (type == 1) speed *= 1.8f;
-                if (type == 2) speed *= 0.8f;
+                if (type == 2) speed *= 1.f;
 
                 float startX = (speed > 0) ? -5.f : 45.f;
                 float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
 
                 bool spaceIsFree = true;
-                float minDistance = (type == 2) ? 3.5f : 8.f;
+                float minDistance = (type == 2) ? 2.2f : 8.f;
 
                 for (auto& c : m_cars) {
                     if (std::abs(c.getGridBounds().position.y - targetY) < 0.1f && std::abs(c.getGridBounds().position.x - startX) < minDistance) {
@@ -125,9 +125,9 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
                 if (spaceIsFree) {
                     int chance = rand() % 100;
-                    if (type == 2 && chance > 40) m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
-                    else if (type == 6 && chance > 80) m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
-                    else if (type == 1 && chance > 85) m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
+                    if (type == 2 && chance > 25) m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
+                    else if (type == 6 && chance > 60) m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
+                    else if (type == 1 && chance > 80) m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
                 }
             }
         }
