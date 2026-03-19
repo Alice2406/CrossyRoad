@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class GameOverScene : public Scene {
 public:
@@ -21,6 +22,15 @@ private:
     int finalScore = 0;
     sf::Texture texBg, texTitle;
     sf::Sprite sprBg, sprTitle;
+
+    sf::SoundBuffer clickBuffer;
+    sf::Sound clickSound;
+    sf::SoundBuffer m_hoverBuffer;
+    sf::Sound m_hoverSound;
+
 	float totalTime = 0.f;
     bool mouseWasPressed = false;
+
+    bool m_wasHoveringLoad = false;
+    bool m_wasHoveringQuit = false;
 };

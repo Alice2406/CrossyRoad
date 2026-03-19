@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include <SFML/Audio.hpp>
 
 class MenuScene : public Scene
 {
@@ -18,20 +19,24 @@ public:
 private:
     sf::Font font;
     sf::Text title;
-
     sf::Texture backgroundTex;
     sf::Sprite backgroundSprite;
- 
+
     sf::RectangleShape playBtn;
     sf::Text playText;
-
     sf::RectangleShape skinBtn;
     sf::Text skinText;
-
     sf::RectangleShape quitBtn;
     sf::Text quitText;
 
+    sf::SoundBuffer m_clickBuffer;
+    sf::Sound m_clickSound;
+    sf::SoundBuffer m_hoverBuffer;
+    sf::Sound m_hoverSound;
+
+    bool m_wasHoveringPlay = false;
+    bool m_wasHoveringSkin = false;
+    bool m_wasHoveringQuit = false;
+
     float totalTime = 0.0f;
 };
-
-

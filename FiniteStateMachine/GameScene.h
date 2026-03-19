@@ -7,6 +7,7 @@
 #include "Log.h"
 #include <vector>
 #include <map>
+#include <SFML/Audio.hpp>
 
 class GameScene : public Scene
 {
@@ -41,4 +42,11 @@ private:
     sf::Font m_font;
     sf::Text m_scoreText;
     sf::Texture m_texPowerUp;
+
+    sf::Music m_backgroundMusic;
+    sf::SoundBuffer m_deathBuffer;
+    sf::Sound m_deathSound;
+
+    float m_deathTimer = 0.0f;
+    bool m_isDying = false;
 };

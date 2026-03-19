@@ -7,17 +7,34 @@
 #include <cmath>
 
 GameScene::GameScene()
-    : m_camera({ 510.f, 2000.f }, { 1800.f, 900.f }),
+    : m_camera({ 510.f, 2000.f }, { 1800.f, 900.f }), m_deathSound(m_deathBuffer),
+    m_isDying(false),
+    m_deathTimer(0.f)
     m_scoreText(m_font)
 {
     if (!m_texCar.loadFromFile("../Asset/scie.png")) std::cerr << "Erreur : scie.png" << std::endl;
     if (!m_texLog.loadFromFile("../Asset/cercueil.png")) std::cerr << "Erreur : cercueil.png" << std::endl;
     if (!m_texFleau.loadFromFile("../Asset/fleau.png")) std::cerr << "Erreur : fleau.png" << std::endl;
 
+    if (!m_backgroundMusic.openFromFile("../Asset/background_music libre de droits Myuu - Down the Rabbit Hole.mp3")) {
+        std::cerr << "Erreur : Musique de fond introuvable !" << std::endl;
+    }
+    else {
+        m_backgroundMusic.setLooping(true);
+        m_backgroundMusic.setVolume(20.f);
+        m_backgroundMusic.play();
+    }
+
+    if (!m_deathBuffer.loadFromFile("../Asset/death_scream.mp3")) {
+        std::cerr << "Erreur : death_scream.mp3 introuvable !" << std::endl;
+    }
+    else {
+        m_deathSound.setVolume(50.f);
+    }
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
     if (!m_font.openFromFile("../Asset/Thunder.ttf")) {
-        std::cerr << "Erreur : font introuvable !" << std::endl;
+        std::cerr << "Erreur : impossible de charger la police !" << std::endl;
     }
 
     m_scoreText.setCharacterSize(50);
@@ -89,6 +106,29 @@ void GameScene::handleInput(sf::RenderWindow& window) {
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
 
+    if (m_isDying) {
+        m_deathTimer += dt;
+        if (m_deathTimer >= 1.0f) {
+            isGameOver = true;
+        }
+        return;
+    }
+
+    m_logTimer += dt;
+    if (m_logTimer >= 2.f) {
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
+        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
+        m_logTimer = 0.f;
+    }
+
+    for (auto it = m_logs.begin(); it != m_logs.end(); ) {
+        if (it->getGridPos().x > 50.f) {
+            it = m_logs.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
     m_spawnTimer += dt;
 
     if (m_spawnTimer >= 0.2f) {
@@ -169,6 +209,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         it->update(dt);
 
         if (m_player.getGridBounds().findIntersection(it->getGridBounds())) {
+
             onLog = true;
             currentLogSpeed = it->getSpeed();
         }
@@ -186,7 +227,9 @@ void GameScene::update(float dt, sf::RenderWindow& window)
             m_player.setGridPos({ pPos.x + currentLogSpeed * dt, pPos.y });
         }
         else {
-            isGameOver = true;
+            m_backgroundMusic.stop();
+            m_deathSound.play();
+            m_isDying = true;
             return;
         }
     }
@@ -212,6 +255,10 @@ void GameScene::update(float dt, sf::RenderWindow& window)
                 continue;
             }
             isGameOver = true;
+            std::cout << "MORT !" << std::endl;
+            m_backgroundMusic.stop();
+            m_deathSound.play();
+            m_isDying = true;
             return;
         }
 
