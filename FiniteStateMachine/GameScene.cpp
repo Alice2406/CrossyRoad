@@ -53,26 +53,63 @@ GameScene::GameScene()
     m_player.spawn({ 25.f, 36.f });
     int playerY = 30;
 
+
     for (int y = playerY - 40; y <= playerY + 20; ++y) {
         char type = m_map.getTileType(0, y);
 
         if (type == 1 || type == 2 || type == 6) {
             float speed = m_lineSpeeds[(y % 100 + 100) % 100];
-            if (type == 1) speed *= 2.5f;
-            if (type == 2) speed *= 0.8f;
+            int initialCount;
+            float minDistance;
 
-            int initialCount = 3 + (rand() % 3);
+            if (type == 2) {
+                speed *= 1.f;
+                initialCount = 10; 
+                minDistance = 2.5f; 
+            }
+            else { 
+                speed *= (type == 1) ? 2.5f : 1.0f;
+                initialCount = 3 + (rand() % 2);
+                minDistance = 6.0f;  
+            }
+
+            float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
 
             for (int i = 0; i < initialCount; ++i) {
-                float randomX = static_cast<float>(rand() % 35);
-                float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
+                bool positionValid = false;
+                float randomX;
+                int attempts = 0;
 
-                if (type == 2)
-                    m_logs.push_back(Log(m_texLog, { randomX, targetY }, speed));
-                else if (type == 6)
-                    m_cars.push_back(Obstacle(m_texFleau, { randomX, targetY }, speed));
-                else if (type == 1)
-                    m_cars.push_back(Obstacle(m_texCar, { randomX, targetY }, speed));
+                while (!positionValid && attempts < 15) {
+                    randomX = static_cast<float>(rand() % 60) - 10.f; 
+                    positionValid = true;
+                    attempts++;
+
+                    if (type == 2) {
+                        for (auto& l : m_logs) {
+                            if (std::abs(l.getGridPos().y - targetY) < 0.1f && std::abs(l.getGridPos().x - randomX) < minDistance) {
+                                positionValid = false;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        for (auto& c : m_cars) {
+                            if (std::abs(c.getGridBounds().position.y - targetY) < 0.1f && std::abs(c.getGridBounds().position.x - randomX) < minDistance) {
+                                positionValid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (positionValid) {
+                    if (type == 2)
+                        m_logs.push_back(Log(m_texLog, { randomX, targetY }, speed));
+                    else if (type == 6)
+                        m_cars.push_back(Obstacle(m_texFleau, { randomX, targetY }, speed));
+                    else if (type == 1)
+                        m_cars.push_back(Obstacle(m_texCar, { randomX, targetY }, speed));
+                }
             }
         }
     }
@@ -165,8 +202,8 @@ void GameScene::update(float dt, sf::RenderWindow& window)
 
                 if (spaceIsFree) {
                     int chance = rand() % 100;
-                    if (type == 2 && chance > 25) m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
-                    else if (type == 6 && chance > 60) m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
+                    if (type == 2 && chance > 40) m_logs.push_back(Log(m_texLog, { startX, targetY }, speed));
+                    else if (type == 6 && chance > 80) m_cars.push_back(Obstacle(m_texFleau, { startX, targetY }, speed));
                     else if (type == 1 && chance > 80) m_cars.push_back(Obstacle(m_texCar, { startX, targetY }, speed));
                 }
             }
@@ -306,7 +343,9 @@ void GameScene::draw(sf::RenderWindow& window)
     }
 
     for (auto& car : m_cars) { car.draw(window); }
-    for (auto& log : m_logs) { log.draw(window, *this); }
+    for (auto& log : m_logs) { 
+        log.draw(window, *this); 
+    }
 
     m_player.draw(window);
 
