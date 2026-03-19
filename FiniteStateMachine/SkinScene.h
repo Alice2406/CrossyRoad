@@ -13,17 +13,9 @@ public:
 
 private:
     sf::Font font;
-    sf::Texture chickenTexture;
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
 
-    sf::RectangleShape backButtonRect; 
-    sf::Sprite backButtonIcon;        
-
-    sf::RectangleShape playButton;
-    sf::Text skinNameText;
-    sf::Text counterText;
-
-    std::vector<sf::Sprite> skins;
-    int currentIndex = 0;
-    float targetOffset = 0.f;
-    float currentOffset = 0.f;
+    sf::RectangleShape backButtonRect;
+    sf::Text backText;
 };

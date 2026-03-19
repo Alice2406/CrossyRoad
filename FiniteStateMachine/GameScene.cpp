@@ -101,7 +101,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
                 if (type == 1) speed *= 1.8f;
                 if (type == 2) speed *= 0.8f;
 
-                float startX = (speed > 0) ? -5.f : 30.f;
+                float startX = (speed > 0) ? -5.f : 45.f;
                 float targetY = (type == 2) ? (float)y - 0.5f : (float)y - 0.3f;
 
                 bool spaceIsFree = true;

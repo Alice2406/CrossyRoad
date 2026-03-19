@@ -17,7 +17,12 @@ public:
     }
     void draw(sf::RenderWindow& window, GameScene& scene);
     sf::FloatRect getGridBounds() const {
-        return sf::FloatRect(m_gridPos, { 2.0f, 0.8f }); // Une bûche de 2 cases de large
+        float offsetX = 0.3f;
+        float offsetY = -0.1f; 
+
+        sf::Vector2f adjustedPos = { m_gridPos.x + offsetX, m_gridPos.y + offsetY };
+
+        return sf::FloatRect(adjustedPos, { 1.7f, 0.5f });
     }
 
     float getSpeed() const { return m_speed; }
