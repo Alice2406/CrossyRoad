@@ -9,7 +9,7 @@
 GameScene::GameScene()
     : m_camera({ 510.f, 2000.f }, { 1800.f, 900.f }), m_deathSound(m_deathBuffer),
     m_isDying(false),
-    m_deathTimer(0.f)
+    m_deathTimer(0.f),
     m_scoreText(m_font)
 {
     if (!m_texCar.loadFromFile("../Asset/scie.png")) std::cerr << "Erreur : scie.png" << std::endl;
@@ -315,17 +315,14 @@ void GameScene::draw(sf::RenderWindow& window)
     window.draw(m_scoreText);
 }
 
-    sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) 
-    {
-        const float HALF_WIDTH = 32.f;
-        const float HALF_HEIGHT = 24.f;
-        const float OFFSET_X = 900.f; 
-        const float OFFSET_Y = 200.f;
+sf::Vector2f GameScene::gridToIso(sf::Vector2f gridPos) 
+{
+    const float HALF_WIDTH = 32.f;
+    const float HALF_HEIGHT = 24.f;
+    const float OFFSET_X = 900.f; 
+    const float OFFSET_Y = 200.f;
 
-        float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
-        float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
-        return sf::Vector2f(isoX, isoY);
-    }
-
-
-
+    float isoX = (gridPos.x - gridPos.y) * HALF_WIDTH + OFFSET_X;
+    float isoY = (gridPos.x + gridPos.y) * HALF_HEIGHT + OFFSET_Y;
+    return sf::Vector2f(isoX, isoY);
+}

@@ -6,7 +6,7 @@ GameOverScene::GameOverScene(int score)
     : sprBg(texBg), sprTitle(texTitle),
     loadText(font, "LOAD GAME", 60),
     quitText(font, "QUIT", 60),
-    scoreText(font, "", 80)
+    scoreText(font, "", 80),
     clickSound(clickBuffer),
     m_hoverSound(m_hoverBuffer)
 {
