@@ -25,12 +25,6 @@ GameScene::GameScene()
         m_backgroundMusic.play();
     }
 
-    if (!m_deathBuffer.loadFromFile("../Asset/death_scream.mp3")) {
-        std::cerr << "Erreur : death_scream.mp3 introuvable !" << std::endl;
-    }
-    else {
-        m_deathSound.setVolume(50.f);
-    }
     m_map.loadFromFile("../Asset/Plaintext.txt");
 
     if (!m_font.openFromFile("../Asset/Thunder.ttf")) {
@@ -54,7 +48,7 @@ GameScene::GameScene()
     int playerY = 30;
 
 
-    for (int y = playerY - 40; y <= playerY + 20; ++y) {
+    for (int y = playerY - 20; y <= playerY + 20; ++y) {
         char type = m_map.getTileType(0, y);
 
         if (type == 1 || type == 2 || type == 6) {
@@ -142,22 +136,6 @@ void GameScene::handleInput(sf::RenderWindow& window) {
 
 void GameScene::update(float dt, sf::RenderWindow& window)
 {
-
-    if (m_isDying) {
-        m_deathTimer += dt;
-        if (m_deathTimer >= 1.0f) {
-            isGameOver = true;
-        }
-        return;
-    }
-
-    m_logTimer += dt;
-    if (m_logTimer >= 2.f) {
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 24.5f), 3.0f));
-        m_logs.push_back(Log(m_texLog, sf::Vector2f(-3.f, 23.5f), 2.0f));
-        m_logTimer = 0.f;
-    }
-
     for (auto it = m_logs.begin(); it != m_logs.end(); ) {
         if (it->getGridPos().x > 50.f) {
             it = m_logs.erase(it);
@@ -265,8 +243,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         }
         else {
             m_backgroundMusic.stop();
-            m_deathSound.play();
-            m_isDying = true;
+            isGameOver = true;
             return;
         }
     }
@@ -296,12 +273,9 @@ void GameScene::update(float dt, sf::RenderWindow& window)
                 ++it; 
                 continue;
             }
-
-            
             std::cout << "MORT !" << std::endl;
             m_backgroundMusic.stop();
-            m_deathSound.play();
-            m_isDying = true;
+            isGameOver = true;
             return;
         }
 
@@ -321,7 +295,7 @@ void GameScene::update(float dt, sf::RenderWindow& window)
         isGameOver = true;
         return;
     }
-    int calculatedScore = 30 - static_cast<int>(m_player.getGridBounds().position.y);
+    int calculatedScore = 35 - static_cast<int>(m_player.getGridBounds().position.y);
     if (calculatedScore > m_highScore) {
         m_highScore = calculatedScore;
         m_scoreText.setString(std::to_string(m_highScore));

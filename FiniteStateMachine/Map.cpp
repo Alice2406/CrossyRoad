@@ -136,10 +136,9 @@ void Map::draw(sf::RenderWindow& window, sf::Vector2f playerGridPos) {
                 window.draw(m_tileSprite);
             }
 
-            if (type == 5) { // PowerUp
+            if (type == 5) {
                 m_tileSprite.setTexture(m_texPowerUp, true);
                 m_tileSprite.setOrigin({ 32.f, 48.f });
-                // Pas besoin de changer setPosition car isoX/isoY sont déjà bons
                 window.draw(m_tileSprite);
             }
         }
